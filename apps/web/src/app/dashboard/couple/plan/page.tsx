@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
@@ -86,12 +87,22 @@ export default function PlanMyWeddingWizard() {
                  <p className="text-sm text-foreground/80">Select the mood that best fits your vision:</p>
                  <div className="grid grid-cols-2 gap-4">
                     <div className="border-2 border-primary rounded-xl overflow-hidden relative h-32 cursor-pointer">
-                      <img src="https://images.unsplash.com/photo-1544928147-79a2dbc1f389?auto=format&fit=crop&q=80" className="w-full h-full object-cover" alt="Traditional"/>
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-bold font-serif text-xl">Traditional</div>
+                      <Image 
+                        src="https://images.unsplash.com/photo-1544928147-79a2dbc1f389?auto=format&fit=crop&q=80" 
+                        fill 
+                        className="object-cover" 
+                        alt="Traditional"
+                      />
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-bold font-serif text-xl z-10">Traditional</div>
                     </div>
                     <div className="border border-neutral-200 hover:border-primary rounded-xl overflow-hidden relative h-32 cursor-pointer">
-                      <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80" className="w-full h-full object-cover" alt="Modern"/>
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-bold font-serif text-xl">Modern Chic</div>
+                      <Image 
+                        src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80" 
+                        fill 
+                        className="object-cover" 
+                        alt="Modern"
+                      />
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-bold font-serif text-xl z-10">Modern Chic</div>
                     </div>
                  </div>
                </div>
