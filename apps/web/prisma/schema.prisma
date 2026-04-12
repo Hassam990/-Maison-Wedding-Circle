@@ -1,0 +1,154 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  role          String    @default("GUEST") // GUEST, COUPLE, VENDOR, ADMIN
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  vendorProfile VendorProfile?
+  coupleProfile CoupleProfile?
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model VendorProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessName    String
+  category        String
+  city            String
+  bio             String?
+  verified        Boolean  @default(false)
+  plan            String   @default("Free")
+  stripeCustomerId String?
+  rating          Float    @default(0)
+  createdAt       DateTime @default(now())
+
+  inquiries       VendorInquiry[]
+  reviews         Review[]
+  savedBy         SavedVendor[]
+}
+
+model CoupleProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventType     String?
+  eventDate     DateTime?
+  city          String?
+  budget        Float?
+  style         String?
+  guestCount    Int?
+  createdAt     DateTime @default(now())
+
+  consultations Consultation[]
+  inquiries     VendorInquiry[]
+  reviews       Review[]
+  savedVendors  SavedVendor[]
+  planningTasks PlanningTask[]
+}
+
+model Consultation {
+  id            String   @id @default(cuid())
+  coupleId      String
+  couple        CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  status        String   @default("New")
+  assignedTo    String?
+  notes         String?
+  createdAt     DateTime @default(now())
+}
+
+model VendorInquiry {
+  id            String   @id @default(cuid())
+  vendorId      String
+  vendor        VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  coupleId      String
+  couple        CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  message       String
+  eventDate     DateTime?
+  status        String   @default("New")
+  createdAt     DateTime @default(now())
+}
+
+model Review {
+  id            String   @id @default(cuid())
+  vendorId      String
+  vendor        VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  coupleId      String
+  couple        CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  rating        Int
+  comment       String?
+  createdAt     DateTime @default(now())
+}
+
+model SavedVendor {
+  id            String   @id @default(cuid())
+  coupleId      String
+  couple        CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  vendorId      String
+  vendor        VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+
+  @@unique([coupleId, vendorId])
+}
+
+model PlanningTask {
+  id            String   @id @default(cuid())
+  coupleId      String
+  couple        CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  title         String
+  category      String?
+  dueDate       DateTime?
+  completed     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+}
