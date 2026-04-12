@@ -14,12 +14,12 @@ export default function AboutPage() {
           <div className="flex-1 space-y-6">
             <h3 className="font-serif text-3xl text-burgundy font-semibold">Our Story</h3>
             <p className="text-foreground/80 leading-relaxed">
-              Maison Wedding circle was created by a family with over 20+ years in the wedding industry. We started setting trends in Atlanta, and today, we help families plan celebrations across the country, focusing on the sophisticated markets of New York and beyond.
+              Maison Wedding Circle was created by a team with over 20+ years in the wedding industry. We started setting trends in Atlanta, and today, we help families plan celebrations across the country, focusing on the sophisticated markets of New York and beyond.
             </p>
             <p className="text-foreground/80 leading-relaxed">
               We bring that legacy into a new way of helping families plan with confidence, without the burden of managing everything alone.
             </p>
-            <p className="font-serif text-xl text-primary italic mt-6">- The Pervaiz Family</p>
+            <p className="font-serif text-xl text-primary italic mt-6">- The Maison Wedding Circle Team</p>
           </div>
         </div>
 

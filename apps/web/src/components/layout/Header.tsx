@@ -10,7 +10,7 @@ export default function Header() {
             <div className="flex h-8 w-8 items-center justify-center rounded-full border border-primary text-primary bg-white/50">
               <span className="font-serif text-lg">M</span>
             </div>
-            <span className="font-serif text-base font-bold tracking-wide uppercase text-burgundy">Maison Wedding circle</span>
+            <span className="font-serif text-base font-bold tracking-wide uppercase text-burgundy">Maison Wedding Circle</span>
           </Link>
         </div>
         

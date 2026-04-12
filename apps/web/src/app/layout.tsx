@@ -5,7 +5,7 @@ import "./globals.css";
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 export const metadata: Metadata = {
-  title: "Maison Wedding circle | Luxury Event Management",
+  title: "Maison Wedding Circle | Luxury Event Management",
   description: "A trusted wedding network for the South Asian community in the US.",
 };
 

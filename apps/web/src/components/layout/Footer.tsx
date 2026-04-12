@@ -9,7 +9,7 @@ export default function Footer() {
             <div className="flex h-10 w-10 items-center justify-center rounded-full border border-primary text-primary">
               <span className="font-serif text-xl">M</span>
             </div>
-            <span className="font-serif text-lg font-semibold tracking-wide uppercase text-primary">Maison Wedding circle</span>
+            <span className="font-serif text-lg font-semibold tracking-wide uppercase text-primary">Maison Wedding Circle</span>
           </div>
           <p className="text-sm text-ivory/80">
             A trusted wedding network for the South Asian community in the US.
@@ -32,7 +32,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="container mx-auto px-4 lg:px-8 mt-12 pt-8 border-t border-ivory/10 text-center text-sm text-ivory/60">
-        &copy; {new Date().getFullYear()} Maison Wedding circle. All rights reserved.
+        &copy; {new Date().getFullYear()} Maison Wedding Circle. All rights reserved.
       </div>
     </footer>
   );

@@ -109,7 +109,7 @@ export default function Home() {
       {/* WHY CHOOSE US */}
       <section className="py-24 bg-transparent text-center">
          <ScrollReveal className="container mx-auto px-4 lg:px-8">
-           <span className="text-sm uppercase tracking-widest text-primary font-bold mb-2 block">Why Choose Maison Wedding circle?</span>
+           <span className="text-sm uppercase tracking-widest text-primary font-bold mb-2 block">Why Choose Maison Wedding Circle?</span>
            <h2 className="text-4xl text-burgundy font-bold mb-16">Not a Directory. A Guided Wedding Network.</h2>
 
            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

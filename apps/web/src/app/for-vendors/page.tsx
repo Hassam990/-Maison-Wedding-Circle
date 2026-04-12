@@ -18,7 +18,7 @@ export default function ForVendorsPage() {
 
       <section className="py-24 bg-white">
         <div className="container mx-auto px-4 lg:px-8">
-          <h2 className="font-serif text-4xl text-burgundy font-bold text-center mb-16">Why Join Maison Wedding circle?</h2>
+          <h2 className="font-serif text-4xl text-burgundy font-bold text-center mb-16">Why Join Maison Wedding Circle?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
              <div>
                <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4 text-2xl">🎯</div>
