@@ -25,49 +25,64 @@ function formatDate(value: Date) {
 export default async function VendorDetailPage({ params }: VendorDetailPageProps) {
   const session = await getServerSession(authOptions);
 
-  const vendor = await db.vendorProfile.findUnique({
-    where: {
-      id: params.id,
-    },
-    select: {
-      id: true,
-      businessName: true,
-      category: true,
-      city: true,
-      bio: true,
-      verified: true,
-      plan: true,
-      rating: true,
-      createdAt: true,
-      user: {
-        select: {
-          name: true,
-          email: true,
+  let vendor;
+  try {
+    vendor = await db.vendorProfile.findUnique({
+      where: {
+        id: params.id,
+      },
+      select: {
+        id: true,
+        businessName: true,
+        category: true,
+        city: true,
+        bio: true,
+        verified: true,
+        plan: true,
+        rating: true,
+        createdAt: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
         },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.error("Failed to fetch vendor:", error);
+    notFound();
+  }
 
   if (!vendor) {
     notFound();
   }
 
-  const [reviewsCount, recentReviews] = await Promise.all([
-    db.review.count({
-      where: {
-        vendorId: vendor.id,
-      },
-    }),
-    db.review.findMany({
-      where: {
-        vendorId: vendor.id,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      take: 5,
-    }),
-  ]);
+  let reviewsCount = 0;
+  let recentReviews: any[] = [];
+
+  try {
+    const [count, reviews] = await Promise.all([
+      db.review.count({
+        where: {
+          vendorId: vendor.id,
+        },
+      }),
+      db.review.findMany({
+        where: {
+          vendorId: vendor.id,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 5,
+      }),
+    ]);
+    reviewsCount = count;
+    recentReviews = reviews;
+  } catch (error) {
+    console.warn("Failed to fetch reviews for vendor:", error);
+  }
 
   const authState =
     !session?.user ? "guest" : session.user.role === "COUPLE" ? "couple" : "other";

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/Input";
 import { SlidingNumber } from '@/components/animate-ui/primitives/texts/sliding-number';
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { toast } from "sonner";
-import CircularGallery from "@/components/ui/CircularGallery";
+import SmoothSlider from "@/components/ui/SmoothSlider";
 
 export default function Home() {
   return (
@@ -34,7 +34,7 @@ export default function Home() {
               <span className="text-primary">booking website.</span>
             </h1>
             <p className="text-lg text-foreground max-w-xl mx-auto lg:mx-0 font-medium">
-              We curate, match, coordinate, and simplify your wedding. Curated South Asian weddings across the UK & USA.
+              We curate, match, coordinate, and simplify your wedding. Curated South Asian weddings across the USA.
             </p>
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-4">
               <Button variant="primary" className="h-12 px-8 text-lg hover:scale-105 transition-transform shadow-lg shadow-primary/30">Start Planning</Button>
@@ -90,14 +90,8 @@ export default function Home() {
             <p className="text-foreground/70 max-w-2xl mx-auto font-medium">A glimpse into the stunning celebrations we help create across the nation.</p>
         </ScrollReveal>
         
-        <div className="relative h-[600px] w-full overflow-hidden">
-          <CircularGallery 
-            bend={1}
-            borderRadius={0.08}
-            scrollSpeed={1.5}
-            scrollEase={0.05}
-            textColor="#3D0C1A"
-          />
+        <div className="w-full">
+          <SmoothSlider />
         </div>
       </section>
 
