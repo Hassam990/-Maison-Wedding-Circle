@@ -23,9 +23,9 @@ build
 **/.env.*.local
 
 # Databases
-*.db
+# *.db (Allowing dev.db for Vercel demo)
 *.db-journal
-**/*.db
+# **/*.db
 **/*.db-journal
 
 # Vercel
