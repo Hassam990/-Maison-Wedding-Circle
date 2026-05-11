@@ -23,21 +23,23 @@ model User {
   sessions      Session[]
   vendorProfile VendorProfile?
   coupleProfile CoupleProfile?
+  notifications Notification[]
+  blogPosts     BlogPost[]
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -61,35 +63,39 @@ model VerificationToken {
 }
 
 model VendorProfile {
-  id              String   @id @default(cuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  businessName    String
-  category        String
-  city            String
-  bio             String?
-  verified        Boolean  @default(false)
-  plan            String   @default("Free")
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessName     String?
+  category         String?
+  city             String?
+  bio              String?
+  verified         Boolean  @default(false)
+  plan             String   @default("Free")
   stripeCustomerId String?
-  rating          Float    @default(0)
-  createdAt       DateTime @default(now())
+  rating           Float    @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @default(now()) @updatedAt
 
-  inquiries       VendorInquiry[]
-  reviews         Review[]
-  savedBy         SavedVendor[]
+  inquiries              VendorInquiry[]
+  reviews                Review[]
+  savedBy                SavedVendor[]
+  adBoosts               AdBoost[]
+  homepageFeaturedVendor HomepageFeaturedVendor?
 }
 
 model CoupleProfile {
-  id            String   @id @default(cuid())
-  userId        String   @unique
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  eventType     String?
-  eventDate     DateTime?
-  city          String?
-  budget        Float?
-  style         String?
-  guestCount    Int?
-  createdAt     DateTime @default(now())
+  id         String    @id @default(cuid())
+  userId     String    @unique
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventType  String?
+  eventDate  DateTime?
+  city       String?
+  budget     Float?
+  style      String?
+  guestCount Int?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now()) @updatedAt
 
   consultations Consultation[]
   inquiries     VendorInquiry[]
@@ -99,56 +105,215 @@ model CoupleProfile {
 }
 
 model Consultation {
-  id            String   @id @default(cuid())
-  coupleId      String
-  couple        CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
-  status        String   @default("New")
-  assignedTo    String?
-  notes         String?
-  createdAt     DateTime @default(now())
+  id           String        @id @default(cuid())
+  coupleId     String
+  couple       CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  status       String        @default("New") // New, In Progress, Matched, Completed
+  assignedTo   String?       // Staff name or ID
+  notes        String?
+  followUpDate DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model VendorInquiry {
-  id            String   @id @default(cuid())
-  vendorId      String
-  vendor        VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  coupleId      String
-  couple        CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
-  message       String
-  eventDate     DateTime?
-  status        String   @default("New")
-  createdAt     DateTime @default(now())
+  id        String        @id @default(cuid())
+  vendorId  String
+  vendor    VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  coupleId  String
+  couple    CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  message   String
+  eventDate DateTime?
+  status    String        @default("New")
+  createdAt DateTime      @default(now())
 }
 
 model Review {
-  id            String   @id @default(cuid())
-  vendorId      String
-  vendor        VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  coupleId      String
-  couple        CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
-  rating        Int
-  comment       String?
-  createdAt     DateTime @default(now())
+  id        String        @id @default(cuid())
+  vendorId  String
+  vendor    VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  coupleId  String
+  couple    CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  rating    Int
+  comment   String?
+  createdAt DateTime      @default(now())
 }
 
 model SavedVendor {
-  id            String   @id @default(cuid())
-  coupleId      String
-  couple        CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
-  vendorId      String
-  vendor        VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  createdAt     DateTime @default(now())
+  id        String        @id @default(cuid())
+  coupleId  String
+  couple    CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  vendorId  String
+  vendor    VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
 
   @@unique([coupleId, vendorId])
 }
 
 model PlanningTask {
-  id            String   @id @default(cuid())
-  coupleId      String
-  couple        CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
-  title         String
-  category      String?
-  dueDate       DateTime?
-  completed     Boolean  @default(false)
-  createdAt     DateTime @default(now())
+  id        String        @id @default(cuid())
+  coupleId  String
+  couple    CoupleProfile @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  title     String
+  category  String?
+  dueDate   DateTime?
+  completed Boolean       @default(false)
+  createdAt DateTime      @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String
+  title     String
+  body      String
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model AdBoost {
+  id          String        @id @default(cuid())
+  vendorId    String
+  vendor      VendorProfile @relation(fields: [vendorId], references: [id])
+  packageId   String
+  package     AdPackage     @relation(fields: [packageId], references: [id])
+  boostType   BoostType
+  placement   AdPlacement
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean       @default(true)
+  impressions Int           @default(0)
+  clicks      Int           @default(0)
+  amountPaid  Float
+  stripePayId String?
+  createdAt   DateTime      @default(now())
+}
+
+model AdPackage {
+  id           String       @id @default(cuid())
+  name         String
+  description  String
+  boostType    BoostType
+  placement    AdPlacement
+  durationDays Int
+  price        Float
+  maxSlots     Int          @default(3)
+  currentSlots Int          @default(0)
+  isActive     Boolean      @default(true)
+  boosts       AdBoost[]
+  waitlist     AdWaitlist[]
+}
+
+model AdWaitlist {
+  id        String    @id @default(cuid())
+  vendorId  String
+  packageId String
+  package   AdPackage @relation(fields: [packageId], references: [id])
+  notified  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+}
+
+enum BoostType {
+  FEATURED_TOP
+  HOMEPAGE_HERO
+  CATEGORY_SPOTLIGHT
+  SEARCH_PRIORITY
+  NEWSLETTER_FEATURE
+}
+
+enum AdPlacement {
+  HOMEPAGE
+  CATEGORY_PAGE
+  SEARCH_RESULTS
+  VENDOR_DIRECTORY
+  NEWSLETTER
+}
+
+model SiteContent {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  type      String   @default("text")
+  label     String
+  group     String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  location  String
+  eventType String
+  quote     String
+  avatarUrl String?
+  rating    Int      @default(5)
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model FaqItem {
+  id        String  @id @default(cuid())
+  question  String
+  answer    String
+  category  String  @default("general")
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+}
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String
+  body        String
+  coverImage  String?
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
+  tags        String
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model TeamMember {
+  id        String  @id @default(cuid())
+  name      String
+  role      String
+  bio       String
+  photoUrl  String?
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+  instagram String?
+  linkedin  String?
+}
+
+model VendorCategory {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  slug        String  @unique
+  icon        String?
+  description String?
+  sortOrder   Int     @default(0)
+  isActive    Boolean @default(true)
+  fieldSchema Json?
+}
+
+model ServiceCity {
+  id       String  @id @default(cuid())
+  city     String
+  state    String
+  isActive Boolean @default(true)
+}
+
+model HomepageFeaturedVendor {
+  id        String        @id @default(cuid())
+  vendorId  String        @unique
+  vendor    VendorProfile @relation(fields: [vendorId], references: [id])
+  sortOrder Int           @default(0)
+  addedAt   DateTime      @default(now())
 }

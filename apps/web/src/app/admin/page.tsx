@@ -1,66 +1,124 @@
 import { Card, CardContent } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { db } from "@/lib/db";
+import { Users, Heart, CalendarCheck, CheckCircle, AlertTriangle } from "lucide-react";
 
-export default function AdminDashboard() {
+export default async function AdminDashboardPage() {
+  let stats = {
+    totalVendors: 0,
+    totalCouples: 0,
+    pendingConsultations: 0,
+    verifiedVendors: 0,
+  };
+  let error: string | null = null;
+  
+  try {
+    const [
+      totalVendors,
+      totalCouples,
+      pendingConsultations,
+      verifiedVendors,
+    ] = await Promise.all([
+      db.vendorProfile.count(),
+      db.coupleProfile.count(),
+      db.consultation.count({ where: { status: "New" } }),
+      db.vendorProfile.count({ where: { verified: true } }),
+    ]);
+    stats = { totalVendors, totalCouples, pendingConsultations, verifiedVendors };
+  } catch (err: any) {
+    error = err.message || "Could not connect to the database.";
+  }
+
+  const metricCards = [
+    {
+      label: "Total Vendors",
+      value: stats.totalVendors,
+      description: "Registered businesses",
+      icon: Users,
+    },
+    {
+      label: "Total Couples",
+      value: stats.totalCouples,
+      description: "Active planning accounts",
+      icon: Heart,
+    },
+    {
+      label: "Pending Consultations",
+      value: stats.pendingConsultations,
+      description: 'Marked as "New"',
+      icon: CalendarCheck,
+    },
+    {
+      label: "Verified Vendors",
+      value: stats.verifiedVendors,
+      description: "Approved profiles",
+      icon: CheckCircle,
+    },
+  ];
+
   return (
-    <div className="flex flex-col min-h-screen bg-neutral-50 text-foreground w-full absolute top-0 left-0 z-[100] h-screen overflow-hidden">
-      <header className="bg-burgundy text-white h-16 shrink-0 flex items-center px-6">
-         <h1 className="font-serif text-xl font-bold">MWC Admin Console</h1>
-      </header>
-      <div className="flex flex-1 overflow-hidden">
-        
-        {/* SIDEBAR */}
-        <div className="w-64 bg-white border-r border-neutral-200 p-4 space-y-1 shrink-0 overflow-y-auto">
-          <Button variant="ghost" className="w-full justify-start font-bold bg-neutral-100 text-burgundy">Dashboard</Button>
-          <Button variant="ghost" className="w-full justify-start text-foreground/70">Vendors</Button>
-          <Button variant="ghost" className="w-full justify-start text-foreground/70">Couples</Button>
-          <Button variant="ghost" className="w-full justify-start text-foreground/70">Consultations</Button>
-          <Button variant="ghost" className="w-full justify-start text-foreground/70">Messages</Button>
-          <Button variant="ghost" className="w-full justify-start text-foreground/70">Settings</Button>
+    <div className="space-y-8 max-w-6xl">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-playfair font-bold text-[#3D0C1A]">
+          Dashboard Overview
+        </h1>
+        <p className="text-[#8a6200] max-w-3xl">
+          Welcome to the Maison Wedding Circle admin panel. View KPIs and manage the entire platform.
+        </p>
+      </div>
+
+      {error && (
+        <div className="bg-[#fff8e8] border-l-4 border-red-500 rounded-lg p-4 mb-6 shadow-sm">
+          <div className="flex items-start">
+            <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" />
+            <div>
+              <h3 className="text-sm font-semibold text-red-800">Database Connection Error</h3>
+              <p className="text-sm text-red-700 mt-1">
+                Unable to load platform data. Please ensure the Supabase database is active and reachable.
+              </p>
+              <p className="text-xs text-red-600 mt-2 font-mono">{error}</p>
+            </div>
+          </div>
         </div>
+      )}
 
-        {/* MAIN CONTENT */}
-        <div className="flex-1 p-8 space-y-8 overflow-y-auto">
-          <h2 className="text-3xl font-bold text-burgundy font-serif">Overview</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-white border-neutral-200">
-              <CardContent className="p-6">
-                <p className="text-sm text-foreground/60 font-semibold mb-2">Total Vendors</p>
-                <p className="text-3xl font-bold text-burgundy">42</p>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {metricCards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <Card
+              key={card.label}
+              className="border border-[#dbb84a] bg-[#fffcf0] shadow-sm flex flex-col"
+            >
+              <CardContent className="p-6 flex-1 flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-sm font-semibold text-[#5a3e00]">{card.label}</p>
+                  <div className="p-2 bg-[#fef3d6] rounded-full">
+                    <Icon className="w-4 h-4 text-[#C9940A]" />
+                  </div>
+                </div>
+                <div className="mt-auto">
+                  <p className="text-3xl font-bold text-[#3D0C1A]">{card.value}</p>
+                  <p className="text-xs text-[#8a6200] mt-1">{card.description}</p>
+                </div>
               </CardContent>
             </Card>
-            <Card className="bg-white border-neutral-200">
-              <CardContent className="p-6">
-                <p className="text-sm text-foreground/60 font-semibold mb-2">Total Couples</p>
-                <p className="text-3xl font-bold text-burgundy">108</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white border-neutral-200">
-              <CardContent className="p-6">
-                <p className="text-sm text-foreground/60 font-semibold mb-2">Pending Consultations</p>
-                <p className="text-3xl font-bold text-red-600">12</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white border-neutral-200">
-              <CardContent className="p-6">
-                <p className="text-sm text-foreground/60 font-semibold mb-2">Monthly MRR</p>
-                <p className="text-3xl font-bold text-green-600">$4,250</p>
-              </CardContent>
-            </Card>
-          </div>
+          );
+        })}
+      </div>
 
-          <div className="flex flex-col lg:flex-row gap-8">
-            <div className="flex-1 bg-white rounded-xl shadow-sm border border-neutral-200 p-6">
-               <h3 className="font-bold text-lg mb-4 text-burgundy font-serif">Recent Consultations</h3>
-               <div className="text-sm text-foreground/60 py-12 text-center border-2 border-dashed border-neutral-200 rounded-lg">No new consultations.</div>
+      <div className="bg-white border border-[#dbb84a] rounded-xl overflow-hidden shadow-sm shadow-[#fef3d6]/50">
+        <div className="border-b border-[#dbb84a] px-6 py-5 bg-[#faf8f0]">
+          <h2 className="text-lg font-playfair font-bold text-[#3D0C1A]">Recent Activity</h2>
+          <p className="text-sm text-[#8a6200]">Data is currently unavailable.</p>
+        </div>
+        <div className="p-6">
+          <div className="py-12 flex flex-col items-center justify-center text-center">
+            <div className="w-16 h-16 mb-4 rounded-full bg-[#fef3d6] flex items-center justify-center text-[#C9940A]">
+              <CalendarCheck className="w-8 h-8" />
             </div>
-            <div className="flex-1 bg-white rounded-xl shadow-sm border border-neutral-200 p-6">
-               <h3 className="font-bold text-lg mb-4 text-burgundy font-serif">Pending Vendor Approvals</h3>
-               <div className="text-sm text-foreground/60 py-12 text-center border-2 border-dashed border-neutral-200 rounded-lg">No pending approvals.</div>
-            </div>
+            <p className="text-[#5a3e00] font-medium">No recent activity detected.</p>
+            <p className="text-sm text-[#8a6200] mt-1">Wait for couples and vendors to perform actions.</p>
           </div>
-
         </div>
       </div>
     </div>

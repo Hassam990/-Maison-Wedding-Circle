@@ -1,15 +1,19 @@
+"use client";
+
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { SlidingNumber } from '@/components/animate-ui/primitives/texts/sliding-number';
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { toast } from "sonner";
+import CircularGallery from "@/components/ui/CircularGallery";
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* HERO SECTION */}
-      <section className="relative w-full min-h-[90vh] flex flex-col items-center justify-center pt-20 overflow-hidden">
+      <section className="relative w-full min-h-[90vh] flex flex-col items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image 
             src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80"
@@ -26,15 +30,14 @@ export default function Home() {
           
           <ScrollReveal delay={0.1} className="flex-1 text-center lg:text-left space-y-6">
             <h1 className="text-5xl lg:text-7xl font-bold text-burgundy tracking-tight leading-tight drop-shadow-md">
-              Your Wedding.<br />
-              The Right People.<br />
-              <span className="text-primary">Zero Stress.</span>
+              Your story deserves more than a<br />
+              <span className="text-primary">booking website.</span>
             </h1>
             <p className="text-lg text-foreground max-w-xl mx-auto lg:mx-0 font-medium">
-              A trusted wedding network for the South Asian community in the US. We connect you with verified, experienced vendors and personally guide you through the planning process.
+              We curate, match, coordinate, and simplify your wedding. Curated South Asian weddings across the UK & USA.
             </p>
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-4">
-              <Button variant="primary" className="h-12 px-8 text-lg hover:scale-105 transition-transform shadow-lg shadow-primary/30">Book a Consultation</Button>
+              <Button variant="primary" className="h-12 px-8 text-lg hover:scale-105 transition-transform shadow-lg shadow-primary/30">Start Planning</Button>
             </div>
             
             <div className="flex items-center justify-center lg:justify-start gap-4 pt-8">
@@ -79,6 +82,25 @@ export default function Home() {
         </div>
       </section>
 
+      {/* GALLERY SECTION */}
+      <section className="py-24 bg-ivory/30">
+        <ScrollReveal className="container mx-auto px-4 lg:px-8 mb-12 text-center">
+            <span className="text-sm uppercase tracking-widest text-primary font-bold mb-2 block">Our Curated Network</span>
+            <h2 className="text-4xl text-burgundy font-bold mb-4">Luxury. Tradition. Excellence.</h2>
+            <p className="text-foreground/70 max-w-2xl mx-auto font-medium">A glimpse into the stunning celebrations we help create across the nation.</p>
+        </ScrollReveal>
+        
+        <div className="relative h-[600px] w-full overflow-hidden">
+          <CircularGallery 
+            bend={1}
+            borderRadius={0.08}
+            scrollSpeed={1.5}
+            scrollEase={0.05}
+            textColor="#3D0C1A"
+          />
+        </div>
+      </section>
+
       {/* HOW IT WORKS */}
       <section className="py-24 bg-transparent">
         <ScrollReveal className="container mx-auto px-4 lg:px-8 text-center">
@@ -89,9 +111,10 @@ export default function Home() {
              <div className="absolute top-12 left-[16%] right-[16%] h-px bg-primary/30 hidden md:block border-dashed border-t" />
              
              {[
-               { icon: "📋", num: "1", title: "Tell Us Your Vision", desc: "Share your needs, style & budget through our simple intake form." },
-               { icon: "🤝", num: "2", title: "Get Matched", desc: "We connect you with trusted, pre-vetted vendors from our exclusive network." },
-               { icon: "💍", num: "3", title: "We Coordinate", desc: "You select your team, we guide you. You enjoy your perfect day." },
+               { icon: "📋", num: "1", title: "Tell Us Your Vision", desc: "Date, city, guest count, style, and budget range." },
+               { icon: "🤝", num: "2", title: "We Curate Your Wedding Team", desc: "Photographers, decorators, venues, makeup artists, catering, and entertainment." },
+               { icon: "💍", num: "3", title: "Private Consultation", desc: "You meet the Maison Wedding Circle team." },
+               { icon: "✨", num: "4", title: "We Coordinate Everything", desc: "You enjoy a professionally managed experience." },
              ].map((step, idx) => (
                <ScrollReveal delay={0.2 * idx} key={step.num} className="relative flex flex-col items-center">
                  <div className="w-24 h-24 rounded-full bg-white/50 backdrop-blur-md border border-white flex items-center justify-center mb-6 relative z-10 shadow-lg hover:scale-110 transition-all duration-300">
@@ -143,38 +166,71 @@ export default function Home() {
              />
              <div className="absolute inset-0 rounded-[32px] ring-1 ring-inset ring-white/20" />
            </ScrollReveal>
-           <ScrollReveal delay={0.4} className="flex-1 w-full max-w-xl">
-             <span className="text-sm uppercase tracking-widest text-primary font-bold mb-2 block">Plan Your Wedding With Us</span>
-             <h2 className="text-4xl text-burgundy font-bold mb-4">Start Your Planning Journey</h2>
-             <p className="text-foreground/80 mb-8 font-medium">Tell us about your event and we&apos;ll personally connect you with the right vendors for your big day.</p>
-             
-             <Card className="p-8 border-none hover:-translate-y-3 hover:shadow-2xl transition-all duration-500">
-               <form className="space-y-5">
-                 <div>
-                   <label className="text-sm font-bold mb-1.5 block text-burgundy">Event Type</label>
-                   <select className="flex h-12 w-full rounded-xl border border-white bg-white/70 backdrop-blur-md px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 shadow-sm transition-all hover:bg-white/90">
-                      <option>Wedding</option>
-                      <option>Mehndi</option>
-                      <option>Reception</option>
-                      <option>Other</option>
-                   </select>
-                 </div>
-                 <div>
-                    <label className="text-sm font-bold mb-1.5 block text-burgundy">Location</label>
-                    <Input placeholder="City / State" className="rounded-xl border-white bg-white/70 backdrop-blur-md h-12 font-medium shadow-sm hover:bg-white/90 focus:border-primary focus:ring-2 focus:ring-primary/50 transition-all" />
-                 </div>
-                 <div>
-                   <label className="text-sm font-bold mb-1.5 block text-burgundy">Budget Range</label>
-                   <select className="flex h-12 w-full rounded-xl border border-white bg-white/70 backdrop-blur-md px-4 py-2 text-sm font-medium shadow-sm hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all">
-                      <option>$20k - $50k</option>
-                      <option>$50k - $100k</option>
-                      <option>$100k - $200k+</option>
-                   </select>
-                 </div>
-                 <Button className="w-full mt-6 h-12 text-md font-bold transition-transform hover:scale-[1.03] shadow-lg shadow-primary/20" variant="primary">Schedule Consultation</Button>
-               </form>
-             </Card>
-           </ScrollReveal>
+            <ScrollReveal delay={0.4} className="flex-1 w-full max-w-xl">
+              <span className="text-sm uppercase tracking-widest text-primary font-bold mb-2 block">Apply for Access</span>
+              <h2 className="text-4xl text-burgundy font-bold mb-4">Begin Your Wedding Journey</h2>
+              <p className="text-foreground/80 mb-8 font-medium">Tell us about your event and we&apos;ll curate the perfect wedding team for your special day.</p>
+              
+              <Card className="p-8 border-none hover:-translate-y-3 hover:shadow-2xl transition-all duration-500">
+                <form 
+                  className="space-y-5"
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.currentTarget);
+                    const data = Object.fromEntries(formData.entries());
+                    
+                    try {
+                      const res = await fetch("/api/consultation", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(data),
+                      });
+                      if (res.ok) {
+                        toast.success("Consultation scheduled! We will contact you soon.");
+                        (e.target as HTMLFormElement).reset();
+                      } else {
+                        toast.error("Something went wrong. Please try again.");
+                      }
+                    } catch (err) {
+                      toast.error("Failed to submit. Check your connection.");
+                    }
+                  }}
+                >
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-bold mb-1.5 block text-burgundy">Name</label>
+                      <Input name="name" required placeholder="Full Name" className="rounded-xl border-white bg-white/70 backdrop-blur-md h-12 font-medium shadow-sm hover:bg-white/90" />
+                    </div>
+                    <div>
+                      <label className="text-sm font-bold mb-1.5 block text-burgundy">Email</label>
+                      <Input name="email" type="email" required placeholder="Email Address" className="rounded-xl border-white bg-white/70 backdrop-blur-md h-12 font-medium shadow-sm hover:bg-white/90" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-bold mb-1.5 block text-burgundy">Event Type</label>
+                    <select name="eventType" className="flex h-12 w-full rounded-xl border border-white bg-white/70 backdrop-blur-md px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 shadow-sm transition-all hover:bg-white/90">
+                       <option>Wedding</option>
+                       <option>Mehndi</option>
+                       <option>Reception</option>
+                       <option>Other</option>
+                    </select>
+                  </div>
+                  <div>
+                     <label className="text-sm font-bold mb-1.5 block text-burgundy">Location</label>
+                     <Input name="location" placeholder="City / State" className="rounded-xl border-white bg-white/70 backdrop-blur-md h-12 font-medium shadow-sm hover:bg-white/90 focus:border-primary focus:ring-2 focus:ring-primary/50 transition-all" />
+                  </div>
+                  <div>
+                    <label className="text-sm font-bold mb-1.5 block text-burgundy">Budget Range</label>
+                    <select name="budget" className="flex h-12 w-full rounded-xl border border-white bg-white/70 backdrop-blur-md px-4 py-2 text-sm font-medium shadow-sm hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all">
+                       <option>$20k - $50k</option>
+                       <option>$50k - $100k</option>
+                       <option>$100k - $200k+</option>
+                    </select>
+                  </div>
+                  <Button type="submit" className="w-full mt-6 h-12 text-md font-bold transition-transform hover:scale-[1.03] shadow-lg shadow-primary/20" variant="primary">Begin Your Wedding Journey</Button>
+                </form>
+              </Card>
+            </ScrollReveal>
          </div>
       </section>
 

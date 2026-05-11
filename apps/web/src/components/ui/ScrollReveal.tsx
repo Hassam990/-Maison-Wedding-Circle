@@ -10,6 +10,7 @@ export function ScrollReveal({ children, delay = 0, className = "" }: { children
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay, ease: "easeOut" }}
+      style={{ willChange: "transform, opacity" }}
       className={className}
     >
       {children}

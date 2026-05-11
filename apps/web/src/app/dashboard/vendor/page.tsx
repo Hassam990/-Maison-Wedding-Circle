@@ -1,77 +1,232 @@
-import { Card, CardContent } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
 
-export default function VendorDashboard() {
-  return (
-    <div className="flex flex-col min-h-screen bg-ivory/50">
-      <div className="container mx-auto px-4 lg:px-8 py-12 flex gap-8">
-        
-        {/* SIDEBAR */}
-        <div className="w-64 hidden lg:block space-y-2">
-          <Button variant="ghost" className="w-full justify-start font-bold bg-primary/10">Overview</Button>
-          <Button variant="ghost" className="w-full justify-start text-foreground/80 hover:text-primary hover:bg-primary/5">Leads (3 New)</Button>
-          <Button variant="ghost" className="w-full justify-start text-foreground/80 hover:text-primary hover:bg-primary/5">Profile Editor</Button>
-          <Button variant="ghost" className="w-full justify-start text-foreground/80 hover:text-primary hover:bg-primary/5">Reviews</Button>
-          <Button variant="ghost" className="w-full justify-start text-foreground/80 hover:text-primary hover:bg-primary/5">Subscription</Button>
+import { Button } from "@/components/ui/Button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
+import { authOptions } from "@/lib/auth";
+import { db } from "@/lib/db";
+
+function formatDate(value: Date | null) {
+  if (!value) {
+    return "Flexible";
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(value);
+}
+
+export default async function VendorDashboardPage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  if (session.user.role !== "VENDOR") {
+    redirect("/dashboard/couple");
+  }
+
+  const vendorProfile = await db.vendorProfile.findFirst({
+    where: {
+      userId: session.user.id,
+    },
+    select: {
+      id: true,
+      businessName: true,
+      category: true,
+      city: true,
+      verified: true,
+      plan: true,
+      createdAt: true,
+    },
+  });
+
+  if (!vendorProfile) {
+    return (
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-12">
+        <div className="space-y-3">
+          <p className="text-sm uppercase tracking-[0.3em] text-stone-500">Vendor dashboard</p>
+          <h1 className="font-serif text-4xl text-stone-900">Complete your vendor profile</h1>
+          <p className="max-w-2xl text-stone-600">
+            Your account is ready, but we could not find a vendor profile to display. Set up your
+            public listing to start receiving inquiries from couples.
+          </p>
         </div>
 
-        {/* MAIN CONTENT */}
-        <div className="flex-1 space-y-8">
-          <h1 className="font-serif text-4xl font-bold text-burgundy">Vendor Dashboard</h1>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-white border-primary/20">
-              <CardContent className="p-6">
-                <p className="text-sm text-foreground/60 font-semibold mb-2">Profile Views (30d)</p>
-                <p className="text-3xl font-bold text-primary">1,204</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white border-primary/20">
-              <CardContent className="p-6">
-                <p className="text-sm text-foreground/60 font-semibold mb-2">New Inquiries</p>
-                <p className="text-3xl font-bold text-primary">4</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white border-primary/20">
-              <CardContent className="p-6">
-                <p className="text-sm text-foreground/60 font-semibold mb-2">Current Plan</p>
-                <p className="text-xl font-bold text-primary mt-2">Professional <span className="text-xs font-normal text-burgundy underline cursor-pointer ml-2">Upgrade</span></p>
-              </CardContent>
-            </Card>
-          </div>
+        <Card className="border-stone-200">
+          <CardHeader>
+            <CardTitle>Create your listing</CardTitle>
+            <CardDescription>
+              Add your business name, category, city, and bio so couples can discover you.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-sm text-stone-600">
+              Once your profile is complete, you can return here to monitor inquiry activity and
+              manage your listing.
+            </div>
+            <form action="/dashboard/vendor/profile">
+              <Button type="submit">Set up vendor profile</Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
-          <h2 className="font-serif text-2xl font-bold text-burgundy mt-8">Recent Leads</h2>
-          <div className="bg-white rounded-xl shadow-sm border border-primary/20 overflow-hidden">
-             <table className="w-full text-left text-sm">
-                <thead className="bg-ivory text-foreground/70 border-b border-primary/20">
-                   <tr>
-                     <th className="p-4 font-semibold">Couple</th>
-                     <th className="p-4 font-semibold">Event Date</th>
-                     <th className="p-4 font-semibold">Message Preview</th>
-                     <th className="p-4 font-semibold">Status</th>
-                     <th className="p-4 font-semibold">Action</th>
-                   </tr>
-                </thead>
-                <tbody className="divide-y divide-primary/10">
-                   {[
-                     {name: "Aman & Sana", date: "Oct 12, 2024", msg: "We love your photography style...", status: "New"},
-                     {name: "Rahul & Priya", date: "Nov 5, 2024", msg: "Are you available for a 3-day...", status: "Replied"}
-                   ].map(l => (
-                     <tr key={l.name} className="hover:bg-primary/5 transition-colors">
-                       <td className="p-4 font-medium text-burgundy">{l.name}</td>
-                       <td className="p-4 text-foreground/80">{l.date}</td>
-                       <td className="p-4 text-foreground/70 truncate max-w-[200px]">{l.msg}</td>
-                       <td className="p-4">
-                          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${l.status === 'New' ? 'bg-primary/20 text-primary-dark' : 'bg-gray-100 text-gray-600'}`}>{l.status}</span>
-                       </td>
-                       <td className="p-4"><Button variant="outline" className="h-8 text-xs">View</Button></td>
-                     </tr>
-                   ))}
-                </tbody>
-             </table>
+  const [inquiryCount, newInquiryCount, recentInquiries] = await Promise.all([
+    db.vendorInquiry.count({
+      where: {
+        vendorId: vendorProfile.id,
+      },
+    }),
+    db.vendorInquiry.count({
+      where: {
+        vendorId: vendorProfile.id,
+        status: "New",
+      },
+    }),
+    db.vendorInquiry.findMany({
+      where: {
+        vendorId: vendorProfile.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 8,
+      select: {
+        id: true,
+        message: true,
+        status: true,
+        eventDate: true,
+        createdAt: true,
+      },
+    }),
+  ]);
+
+  const metrics = [
+    {
+      label: "Total inquiries",
+      value: inquiryCount.toString(),
+      detail: "All couple messages received",
+    },
+    {
+      label: "New inquiries",
+      value: newInquiryCount.toString(),
+      detail: "Awaiting your first response",
+    },
+    {
+      label: "Current plan",
+      value: vendorProfile.plan || "Standard",
+      detail: "Displayed on your public profile",
+    },
+    {
+      label: "Verification",
+      value: vendorProfile.verified ? "Verified" : "Pending",
+      detail: vendorProfile.verified ? "Trusted badge is active" : "Verification is still in review",
+    },
+  ];
+
+  return (
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-12">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="space-y-3">
+          <p className="text-sm uppercase tracking-[0.3em] text-stone-500">Vendor dashboard</p>
+          <h1 className="font-serif text-4xl text-stone-900">
+            {vendorProfile.businessName || "Your business"}
+          </h1>
+          <p className="max-w-2xl text-stone-600">
+            Track inquiry activity, review listing visibility, and keep your profile polished for
+            upcoming bookings.
+          </p>
+          <div className="flex flex-wrap gap-3 text-sm text-stone-600">
+            <span className="rounded-full bg-stone-100 px-3 py-1">
+              {vendorProfile.category || "Category pending"}
+            </span>
+            <span className="rounded-full bg-stone-100 px-3 py-1">
+              {vendorProfile.city || "City pending"}
+            </span>
+            <span className="rounded-full bg-stone-100 px-3 py-1">
+              Joined {formatDate(vendorProfile.createdAt)}
+            </span>
           </div>
+        </div>
+
+        <div className="flex gap-3">
+          <form action="/vendors">
+            <Button type="submit" variant="outline">
+              View marketplace
+            </Button>
+          </form>
+          <form action="/dashboard/vendor/profile">
+            <Button type="submit">Edit profile</Button>
+          </form>
         </div>
       </div>
+
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {metrics.map((metric) => (
+          <Card key={metric.label} className="border-stone-200">
+            <CardHeader className="pb-3">
+              <CardDescription>{metric.label}</CardDescription>
+              <CardTitle className="text-3xl font-semibold text-stone-900">{metric.value}</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0 text-sm text-stone-600">{metric.detail}</CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <Card className="border-stone-200">
+        <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <CardTitle>Recent inquiries</CardTitle>
+            <CardDescription>
+              Your latest couple messages, ordered from newest to oldest.
+            </CardDescription>
+          </div>
+          <Link href="/dashboard/vendor/profile" className="text-sm font-medium text-stone-700 underline-offset-4 hover:underline">
+            Refresh your listing details
+          </Link>
+        </CardHeader>
+        <CardContent>
+          {recentInquiries.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-stone-200 bg-stone-50 px-6 py-10 text-center text-sm text-stone-600">
+              No inquiries yet. Once couples contact you through your vendor page, they will appear
+              here.
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {recentInquiries.map((inquiry) => (
+                <div
+                  key={inquiry.id}
+                  className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm"
+                >
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="space-y-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="rounded-full bg-stone-900 px-3 py-1 text-xs font-medium text-white">
+                          {inquiry.status}
+                        </span>
+                        <span className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                          Event date: {formatDate(inquiry.eventDate)}
+                        </span>
+                      </div>
+                      <p className="text-sm leading-7 text-stone-700">{inquiry.message}</p>
+                    </div>
+                    <div className="shrink-0 text-sm text-stone-500">
+                      {formatDate(inquiry.createdAt)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

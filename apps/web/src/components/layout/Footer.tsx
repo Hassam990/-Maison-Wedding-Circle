@@ -18,11 +18,11 @@ export default function Footer() {
         <div className="flex flex-col gap-2">
           <h4 className="font-serif font-semibold text-primary">Couples</h4>
           <Link href="/for-couples" className="text-sm text-ivory/80 hover:text-primary transition-colors">Plan Your Wedding</Link>
-          <Link href="/vendors" className="text-sm text-ivory/80 hover:text-primary transition-colors">Browse Vendors</Link>
+          <Link href="/vendors" className="text-sm text-ivory/80 hover:text-primary transition-colors">Curated Vendors</Link>
         </div>
         <div className="flex flex-col gap-2">
           <h4 className="font-serif font-semibold text-primary">Vendors</h4>
-          <Link href="/for-vendors" className="text-sm text-ivory/80 hover:text-primary transition-colors">Join Directory</Link>
+          <Link href="/for-vendors" className="text-sm text-ivory/80 hover:text-primary transition-colors">Join Curated Network</Link>
           <Link href="/login" className="text-sm text-ivory/80 hover:text-primary transition-colors">Vendor Login</Link>
         </div>
         <div className="flex flex-col gap-2">

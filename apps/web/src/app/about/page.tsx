@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col min-h-screen pt-20 pb-24 bg-ivory">
+    <div className="flex flex-col min-h-screen pb-24 bg-ivory">
       <div className="container mx-auto px-4 lg:px-8">
         <h1 className="font-serif text-5xl font-bold text-burgundy mb-6 text-center">Built on Legacy & Trust</h1>
         <h2 className="text-xl text-primary font-serif text-center mb-16">From Atlanta Roots to New York Celebrations</h2>
@@ -29,7 +29,7 @@ export default function AboutPage() {
              {[
                {name: "Aisha Pervaiz", role: "Principal Planner", img: "https://i.pravatar.cc/300?img=5"},
                {name: "Zayn Pervaiz", role: "Vendor Relations", img: "https://i.pravatar.cc/300?img=11"},
-               {name: "Zara Khan", role: "Design Coordinator", img: "https://i.pravatar.cc/300?img=9"}
+               {name: "Admin", role: "Design Coordinator", img: "https://i.pravatar.cc/300?img=9"}
              ].map(t => (
                <div key={t.name} className="flex flex-col items-center text-center">
                  <Image src={t.img} alt={t.name} width={200} height={200} className="rounded-full w-48 h-48 object-cover mb-6 border-4 border-primary/30" />

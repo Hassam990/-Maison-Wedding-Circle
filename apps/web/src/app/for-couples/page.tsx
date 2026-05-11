@@ -4,8 +4,17 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { db } from "@/lib/db";
 
-export default function ForCouplesPage() {
+export default async function ForCouplesPage() {
+  const featuredVendors = await db.vendorProfile.findMany({
+    take: 3,
+    orderBy: [
+      { verified: 'desc' },
+      { rating: 'desc' }
+    ],
+  });
+
   return (
     <div className="flex flex-col min-h-screen bg-transparent">
       <section className="bg-burgundy text-ivory pt-32 pb-24 shadow-lg">
@@ -37,27 +46,35 @@ export default function ForCouplesPage() {
            </ScrollReveal>
 
            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             {[1,2,3].map((i, idx) => (
-               <ScrollReveal key={i} delay={idx * 0.1}>
+             {featuredVendors.map((vendor, idx) => (
+               <ScrollReveal key={vendor.id} delay={idx * 0.1}>
                  <Card className="overflow-hidden bg-white/40 border border-white/50 backdrop-blur-xl hover:-translate-y-2 hover:shadow-[0_16px_48px_0_rgba(201,148,10,0.15)] transition-all duration-500 flex flex-col h-full">
                    <div className="h-56 relative shrink-0">
-                     <Image src={`https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80`} fill className="object-cover" alt="Vendor" />
+                     <Image 
+                        src={`https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80`} 
+                        fill 
+                        className="object-cover" 
+                        alt={vendor.businessName || "Vendor"} 
+                      />
                    </div>
                    <CardContent className="p-6 flex flex-col flex-1">
                      <div className="flex justify-between items-start mb-2">
-                       <span className="text-[10px] font-bold text-primary uppercase tracking-wider bg-primary/10 px-2.5 py-1 rounded-md border border-primary/20 shadow-sm">Catering</span>
-                       <span className="text-primary font-bold text-xs bg-white/90 px-2 py-1 rounded-md shadow-sm border border-white/50">★ 5.0</span>
+                       <span className="text-[10px] font-bold text-primary uppercase tracking-wider bg-primary/10 px-2.5 py-1 rounded-md border border-primary/20 shadow-sm">{vendor.category}</span>
+                       <span className="text-primary font-bold text-xs bg-white/90 px-2 py-1 rounded-md shadow-sm border border-white/50">★ {vendor.rating.toFixed(1)}</span>
                      </div>
-                     <h3 className="text-2xl font-bold text-burgundy mb-2">Taj Authentic Catering</h3>
-                     <p className="text-xs font-semibold text-foreground/60 mb-6">Atlanta, GA</p>
+                     <h3 className="text-2xl font-bold text-burgundy mb-2">{vendor.businessName}</h3>
+                     <p className="text-xs font-semibold text-foreground/60 mb-6">{vendor.city}</p>
                      <div className="mt-auto">
-                       <Button variant="outline" className="w-full h-12 shadow-sm font-bold bg-white/60 hover:bg-white/90">View Profile</Button>
+                       <Link href={`/vendors/${vendor.id}`}>
+                         <Button variant="outline" className="w-full h-12 shadow-sm font-bold bg-white/60 hover:bg-white/90">View Profile</Button>
+                       </Link>
                      </div>
                    </CardContent>
                  </Card>
                </ScrollReveal>
              ))}
            </div>
+
         </div>
       </section>
 

@@ -1,123 +1,274 @@
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getServerSession } from "next-auth";
 
-export default function VendorProfile() {
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
+import { authOptions } from "@/lib/auth";
+import { db } from "@/lib/db";
+
+import InquiryForm from "./InquiryForm";
+
+type VendorDetailPageProps = {
+  params: {
+    id: string;
+  };
+};
+
+function formatDate(value: Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(value);
+}
+
+export default async function VendorDetailPage({ params }: VendorDetailPageProps) {
+  const session = await getServerSession(authOptions);
+
+  const vendor = await db.vendorProfile.findUnique({
+    where: {
+      id: params.id,
+    },
+    select: {
+      id: true,
+      businessName: true,
+      category: true,
+      city: true,
+      bio: true,
+      verified: true,
+      plan: true,
+      rating: true,
+      createdAt: true,
+      user: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+
+  if (!vendor) {
+    notFound();
+  }
+
+  const [reviewsCount, recentReviews] = await Promise.all([
+    db.review.count({
+      where: {
+        vendorId: vendor.id,
+      },
+    }),
+    db.review.findMany({
+      where: {
+        vendorId: vendor.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 5,
+    }),
+  ]);
+
+  const authState =
+    !session?.user ? "guest" : session.user.role === "COUPLE" ? "couple" : "other";
+
   return (
-    <div className="flex flex-col min-h-screen bg-ivory">
-      {/* HEADER SECTION */}
-      <div className="relative w-full h-[40vh] min-h-[300px]">
-        <Image src="https://images.unsplash.com/photo-1544928147-79a2dbc1f389?auto=format&fit=crop&q=80" alt="Cover" fill className="object-cover" />
-        <div className="absolute inset-0 bg-black/20" />
-      </div>
-      
-      <div className="container mx-auto px-4 lg:px-8 relative -mt-24 pb-20">
-        <div className="flex flex-col lg:flex-row gap-8">
-           
-           {/* MAIN CONTENT */}
-           <div className="flex-1 space-y-8">
-             <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/20 flex flex-col md:flex-row gap-6 items-start md:items-center">
-                <div className="w-32 h-32 rounded-full border-4 border-white bg-white shadow-md relative overflow-hidden shrink-0">
-                  <Image src="https://i.pravatar.cc/300?img=12" fill className="object-cover" alt="Logo" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-semibold text-primary uppercase tracking-wider bg-primary/10 px-2 py-0.5 rounded-full">Photography</span>
-                    <span className="text-yellow-500 font-bold text-sm">★ 4.9 (124 Reviews)</span>
-                  </div>
-                  <h1 className="font-serif text-4xl font-bold text-burgundy flex items-center gap-2">
-                    Reverie Photography
-                    <span className="text-primary text-xl" title="Verified vendor">✔</span>
-                  </h1>
-                  <p className="text-foreground/70 mt-1">Atlanta, GA</p>
-                </div>
-                <div className="flex flex-col gap-2 w-full md:w-auto mt-4 md:mt-0">
-                  <Button variant="outline">♡ Save to My List</Button>
-                </div>
-             </div>
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-12">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+        <div className="max-w-3xl space-y-4">
+          <div className="flex flex-wrap items-center gap-2 text-sm text-stone-600">
+            <Link href="/vendors" className="underline-offset-4 hover:underline">
+              Vendors
+            </Link>
+            <span>/</span>
+            <span>{vendor.businessName || "Vendor profile"}</span>
+          </div>
 
-             {/* ABOUT */}
-             <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/20">
-               <h3 className="font-serif text-2xl text-burgundy font-semibold mb-4">About the Vendor</h3>
-               <p className="text-foreground/80 leading-relaxed">
-                 We are a fine art wedding photography studio based in Atlanta, with a passion for South Asian celebrations. Our approach blends editorial elegance with photojournalistic authenticity, capturing the essence of your rich traditions, vibrant colors, and unscripted emotions.
-               </p>
-             </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-stone-100 px-3 py-1 text-xs font-medium text-stone-700">
+              {vendor.category || "Category pending"}
+            </span>
+            <span className="rounded-full bg-stone-100 px-3 py-1 text-xs font-medium text-stone-700">
+              {vendor.city || "City pending"}
+            </span>
+            {vendor.verified ? (
+              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
+                Verified
+              </span>
+            ) : null}
+          </div>
 
-             {/* GALLERY */}
-             <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/20">
-               <h3 className="font-serif text-2xl text-burgundy font-semibold mb-4">Gallery</h3>
-               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                 {[1,2,3,4,5,6].map(i => (
-                   <div key={i} className="aspect-square relative rounded-lg overflow-hidden border border-primary/10">
-                     <Image src={`https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&sig=${i}`} fill className="object-cover hover:scale-105 transition-transform" alt="Gallery image" />
-                   </div>
-                 ))}
-               </div>
-             </div>
+          <div className="space-y-3">
+            <h1 className="font-serif text-4xl text-stone-900">
+              {vendor.businessName || "Untitled vendor"}
+            </h1>
+            <p className="text-lg leading-8 text-stone-600">
+              {vendor.bio || "This vendor has not added a public bio yet."}
+            </p>
+          </div>
 
-             {/* SERVICES & PRICING */}
-             <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/20">
-               <h3 className="font-serif text-2xl text-burgundy font-semibold mb-4">Services & Pricing</h3>
-               <div className="divide-y divide-primary/10">
-                 <div className="py-4 flex justify-between items-center">
-                   <div>
-                     <h4 className="font-semibold text-burgundy">Engagement Session</h4>
-                     <p className="text-sm text-foreground/70">2 hours, multiple locations, 100+ edited photos</p>
-                   </div>
-                   <span className="font-semibold text-primary">From $500</span>
-                 </div>
-                 <div className="py-4 flex justify-between items-center">
-                   <div>
-                     <h4 className="font-semibold text-burgundy">Wedding Day Coverage (8 Hours)</h4>
-                     <p className="text-sm text-foreground/70">Single photographer, online gallery, print release</p>
-                   </div>
-                   <span className="font-semibold text-primary">From $3,200</span>
-                 </div>
-                 <div className="py-4 flex justify-between items-center">
-                   <div>
-                     <h4 className="font-semibold text-burgundy">Multi-Day Destination Wedding</h4>
-                     <p className="text-sm text-foreground/70">3-day coverage (Mehndi, Sangeet, Wedding, Reception)</p>
-                   </div>
-                   <span className="font-semibold text-primary">Custom Quote</span>
-                 </div>
-               </div>
-             </div>
-           </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Card className="border-stone-200">
+              <CardHeader className="pb-3">
+                <CardDescription>Rating</CardDescription>
+                <CardTitle>
+                  {vendor.rating !== null && vendor.rating !== undefined
+                    ? Number(vendor.rating).toFixed(1)
+                    : "New"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 text-sm text-stone-600">
+                Based on visible couple feedback.
+              </CardContent>
+            </Card>
 
-           {/* SIDEBAR */}
-           <div className="w-full lg:w-96 space-y-6">
-             <div className="sticky top-28 bg-white p-6 rounded-2xl shadow-sm border border-primary/20">
-               <h3 className="font-serif text-2xl text-burgundy font-semibold mb-2">Message Vendor</h3>
-               <p className="text-sm text-foreground/70 mb-6">Contact Reverie Photography directly for availability and custom quotes.</p>
-               
-               <form className="space-y-4">
-                 <div>
-                   <label className="text-xs font-semibold mb-1 block text-burgundy">Your Name</label>
-                   <Input placeholder="John & Jane" />
-                 </div>
-                 <div>
-                   <label className="text-xs font-semibold mb-1 block text-burgundy">Email</label>
-                   <Input type="email" placeholder="john@example.com" />
-                 </div>
-                 <div>
-                   <label className="text-xs font-semibold mb-1 block text-burgundy">Event Date (Optional)</label>
-                   <Input type="date" />
-                 </div>
-                 <div>
-                   <label className="text-xs font-semibold mb-1 block text-burgundy">Message</label>
-                   <textarea 
-                      className="flex min-h-[100px] w-full rounded-md border border-neutral-300 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-                      placeholder="Hi, we love your work and are planning a wedding for next summer..."
-                   ></textarea>
-                 </div>
-                 <Button className="w-full" variant="primary">Send Message</Button>
-               </form>
-             </div>
-           </div>
+            <Card className="border-stone-200">
+              <CardHeader className="pb-3">
+                <CardDescription>Reviews</CardDescription>
+                <CardTitle>{reviewsCount}</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 text-sm text-stone-600">
+                Public reviews currently available.
+              </CardContent>
+            </Card>
 
+            <Card className="border-stone-200">
+              <CardHeader className="pb-3">
+                <CardDescription>Plan</CardDescription>
+                <CardTitle>{vendor.plan || "Standard"}</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 text-sm text-stone-600">
+                Listing tier in the Maison Events marketplace.
+              </CardContent>
+            </Card>
+          </div>
         </div>
+
+        <Card className="w-full max-w-xl border-stone-200">
+          <CardHeader>
+            <CardTitle>Request Through Consultation</CardTitle>
+            <CardDescription>
+              Tell us your vision and we will curate this vendor for your wedding team.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <InquiryForm vendorId={vendor.id} authState={authState} />
+          </CardContent>
+        </Card>
       </div>
+
+      <div className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
+        <Card className="border-stone-200">
+          <CardHeader>
+            <CardTitle>About this vendor</CardTitle>
+            <CardDescription>
+              Key details couples often review before reaching out.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm text-stone-600">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-2xl bg-stone-50 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-stone-500">Business name</p>
+                <p className="mt-2 text-base font-medium text-stone-900">
+                  {vendor.businessName || "Untitled vendor"}
+                </p>
+              </div>
+              <div className="rounded-2xl bg-stone-50 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-stone-500">Category</p>
+                <p className="mt-2 text-base font-medium text-stone-900">
+                  {vendor.category || "Not provided"}
+                </p>
+              </div>
+              <div className="rounded-2xl bg-stone-50 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-stone-500">City</p>
+                <p className="mt-2 text-base font-medium text-stone-900">
+                  {vendor.city || "Not provided"}
+                </p>
+              </div>
+              <div className="rounded-2xl bg-stone-50 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-stone-500">Contact</p>
+                <p className="mt-2 text-base font-medium text-stone-900">
+                  Available through Maison Wedding Circle
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-stone-200 p-5">
+              <p className="text-xs uppercase tracking-[0.2em] text-stone-500">Public bio</p>
+              <p className="mt-3 leading-7 text-stone-700">
+                {vendor.bio || "This vendor has not yet shared a detailed public biography."}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-stone-200">
+          <CardHeader>
+            <CardTitle>Recent reviews</CardTitle>
+            <CardDescription>
+              Latest feedback shared by couples in the marketplace.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {recentReviews.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-stone-200 bg-stone-50 px-5 py-8 text-sm text-stone-600">
+                No public reviews yet. Couples can still reach out directly through the inquiry
+                form.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {(recentReviews as Array<any>).map((review) => (
+                  <div key={review.id} className="rounded-2xl border border-stone-200 p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="text-sm font-medium text-stone-900">
+                        {typeof review.rating === "number" ? `${review.rating}/5` : "Review"}
+                      </div>
+                      <div className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                        {review.createdAt ? formatDate(new Date(review.createdAt)) : ""}
+                      </div>
+                    </div>
+                    <p className="mt-3 text-sm leading-7 text-stone-600">
+                      {review.comment ||
+                        review.message ||
+                        review.content ||
+                        "This review did not include written feedback."}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="border-stone-200">
+        <CardHeader>
+          <CardTitle>Listing activity</CardTitle>
+          <CardDescription>
+            Helpful context for how established this profile is in the marketplace.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl bg-stone-50 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-stone-500">Status</p>
+            <p className="mt-2 text-base font-medium text-stone-900">
+              {vendor.verified ? "Verified and public" : "Pending verification"}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-stone-50 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-stone-500">Member since</p>
+            <p className="mt-2 text-base font-medium text-stone-900">
+              {formatDate(vendor.createdAt)}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-stone-50 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-stone-500">Contact visibility</p>
+            <p className="mt-2 text-base font-medium text-stone-900">
+              Curated through Consultation
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
