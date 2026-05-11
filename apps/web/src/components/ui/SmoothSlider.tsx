@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 const images = [
-  { src: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80", title: "Luxury Wedding" },
+  { src: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80", title: "Luxury South Asian Wedding" },
   { src: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80", title: "Floral Decor" },
   { src: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&q=80", title: "Celebration" },
   { src: "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&q=80", title: "Elegance" },
@@ -41,7 +41,7 @@ export default function SmoothSlider() {
               className="object-cover transition-transform duration-500 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-burgundy/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-              <span className="text-ivory font-bold text-xl">{img.title}</span>
+              <span className="text-ivory font-serif font-bold text-xl">{img.title}</span>
             </div>
           </div>
         ))}

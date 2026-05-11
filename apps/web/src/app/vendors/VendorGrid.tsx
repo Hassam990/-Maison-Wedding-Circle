@@ -53,7 +53,7 @@ export default function VendorGrid({ vendors }: { vendors: Vendor[] }) {
                     {"★".repeat(Math.round(v.rating || 5))}
                 </div>
             </div>
-            <h3 className="text-xl font-bold text-burgundy group-hover:text-primary transition-colors">{v.businessName || "Untitled Vendor"}</h3>
+            <h3 className="text-xl font-serif font-bold text-burgundy group-hover:text-primary transition-colors">{v.businessName || "Untitled Vendor"}</h3>
             <div className="flex items-center gap-2 text-stone-500 text-sm">
                 <span>📍</span>
                 <span>{v.city || "USA"}</span>
