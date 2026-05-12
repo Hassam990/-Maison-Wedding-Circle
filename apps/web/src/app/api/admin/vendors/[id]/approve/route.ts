@@ -1,25 +1,28 @@
-import { NextResponse } from "next/server";
+export const dynamic = 'force-dynamic';
 import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 
-export async function PATCH(
-  req: Request,
+export async function POST(
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   const session = await getServerSession(authOptions);
+
   if (!session || (session.user.role !== "SUPER_ADMIN" && session.user.role !== "ADMIN")) {
-    return new NextResponse("Unauthorized", { status: 401 });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const { verified } = await req.json();
-    const updated = await db.vendorProfile.update({
+    const vendor = await db.vendorProfile.update({
       where: { id: params.id },
-      data: { verified: Boolean(verified) }
+      data: { verified: true },
     });
-    return NextResponse.json(updated);
+
+    return NextResponse.json(vendor);
   } catch (error) {
-    return new NextResponse("Internal Server Error", { status: 500 });
+    console.error("Error approving vendor:", error);
+    return NextResponse.json({ message: "Error" }, { status: 500 });
   }
 }
