@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -273,7 +274,7 @@ export default async function CoupleDashboardPage() {
                   coupleProfile.style,
                 ]
                   .filter(Boolean)
-                  .join(" • ")
+                  .join(" â€¢ ")
               : "Add your style, city, and event type to refine recommendations."}
           </CardContent>
         </Card>
@@ -330,7 +331,7 @@ export default async function CoupleDashboardPage() {
                       <p className="text-sm text-neutral-600">
                         {[savedVendor.vendor.category, savedVendor.vendor.city]
                           .filter(Boolean)
-                          .join(" • ")}
+                          .join(" â€¢ ")}
                       </p>
                       {savedVendor.vendor.bio ? (
                         <p className="line-clamp-2 text-sm leading-6 text-neutral-600">

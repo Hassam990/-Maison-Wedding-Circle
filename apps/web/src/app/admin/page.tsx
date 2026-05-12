@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { Card, CardContent } from "@/components/ui/Card";
 import { db } from "@/lib/db";
 import { Users, Heart, CalendarCheck, CheckCircle, AlertTriangle } from "lucide-react";

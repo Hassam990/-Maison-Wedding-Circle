@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
@@ -60,7 +61,7 @@ export default async function ForCouplesPage() {
                    <CardContent className="p-6 flex flex-col flex-1">
                      <div className="flex justify-between items-start mb-2">
                        <span className="text-[10px] font-bold text-primary uppercase tracking-wider bg-primary/10 px-2.5 py-1 rounded-md border border-primary/20 shadow-sm">{vendor.category}</span>
-                       <span className="text-primary font-bold text-xs bg-white/90 px-2 py-1 rounded-md shadow-sm border border-white/50">★ {vendor.rating.toFixed(1)}</span>
+                       <span className="text-primary font-bold text-xs bg-white/90 px-2 py-1 rounded-md shadow-sm border border-white/50">â˜… {vendor.rating.toFixed(1)}</span>
                      </div>
                      <h3 className="text-2xl font-bold text-burgundy mb-2">{vendor.businessName}</h3>
                      <p className="text-xs font-semibold text-foreground/60 mb-6">{vendor.city}</p>
