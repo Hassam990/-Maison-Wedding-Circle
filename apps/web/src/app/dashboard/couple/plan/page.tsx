@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = 'force-dynamic';
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -646,7 +647,7 @@ export default function CouplePlanPage() {
                             >
                               <span>{task.title}</span>
                               <span className="text-neutral-500">
-                                {task.category || "General"} •{" "}
+                                {task.category || "General"} Ã¢â‚¬Â¢{" "}
                                 {task.completed ? "Complete" : "Pending"}
                               </span>
                             </div>

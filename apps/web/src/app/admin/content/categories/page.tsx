@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/Card";
@@ -152,7 +153,7 @@ export default function CategoriesManagerPage() {
                     <label className="text-xs font-bold text-[#8a6200] uppercase">Icon (Emoji or SVG)</label>
                     <input 
                       className="w-full p-3 border border-[#dbb84a] rounded-xl text-sm focus:ring-2 focus:ring-[#C9940A] outline-none" 
-                      placeholder="🍽️"
+                      placeholder="Ã°Å¸ÂÂ½Ã¯Â¸Â"
                       value={formData.icon || ""}
                       onChange={e => setFormData({...formData, icon: e.target.value})}
                     />
@@ -201,7 +202,7 @@ export default function CategoriesManagerPage() {
                 <tr key={item.id} className="group hover:bg-[#fffdf5] transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <span className="text-xl">{item.icon || "🏷️"}</span>
+                      <span className="text-xl">{item.icon || "Ã°Å¸ÂÂ·Ã¯Â¸Â"}</span>
                       <div>
                         <p className="text-sm font-bold text-[#3D0C1A]">{item.name}</p>
                         <p className="text-xs text-[#8a6200]">{item.description || "No description provided."}</p>

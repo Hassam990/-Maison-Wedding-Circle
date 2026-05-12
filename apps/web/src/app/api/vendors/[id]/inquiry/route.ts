@@ -8,12 +8,12 @@ export async function POST(
 ) {
   try {
     const data = await req.json();
-    const inquiry = await db.inquiry.create({
+    
+    // Schema uses vendorInquiry, not inquiry
+    const inquiry = await db.vendorInquiry.create({
       data: {
         vendorId: params.id,
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
+        coupleId: data.coupleId || "", // This needs a valid coupleId in your schema
         message: data.message,
         eventDate: data.eventDate ? new Date(data.eventDate) : null,
       },

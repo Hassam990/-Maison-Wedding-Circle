@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = 'force-dynamic';
 
 import { useState } from "react";
 import { 
@@ -130,15 +131,15 @@ export default function MessagesPage() {
                  </h3>
                  <ul className="space-y-3 text-xs text-white/70 leading-relaxed font-medium">
                     <li className="flex gap-2">
-                       <span className="text-[#C9940A]">•</span>
+                       <span className="text-[#C9940A]">Ã¢â‚¬Â¢</span>
                        Only SUPER_ADMIN can send broadcasts to all vendors.
                     </li>
                     <li className="flex gap-2">
-                       <span className="text-[#C9940A]">•</span>
+                       <span className="text-[#C9940A]">Ã¢â‚¬Â¢</span>
                        Moderation of threads is restricted to STAFF_ADMIN.
                     </li>
                     <li className="flex gap-2">
-                       <span className="text-[#C9940A]">•</span>
+                       <span className="text-[#C9940A]">Ã¢â‚¬Â¢</span>
                        Broadcasts are capped at 3 per week to prevent spam.
                     </li>
                  </ul>

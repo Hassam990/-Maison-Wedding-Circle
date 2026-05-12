@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/Card";
@@ -136,7 +137,7 @@ export default function AdminVendorsPage() {
                                   <p className="text-sm font-bold text-[#3D0C1A]">{vendor.businessName}</p>
                                   {vendor.verified && <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 fill-emerald-50" />}
                                </div>
-                               <p className="text-[11px] text-[#8a6200]">{vendor.category} · {vendor.city}</p>
+                               <p className="text-[11px] text-[#8a6200]">{vendor.category} Ã‚Â· {vendor.city}</p>
                             </div>
                          </div>
                       </td>

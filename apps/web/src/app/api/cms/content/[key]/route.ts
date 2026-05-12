@@ -33,16 +33,21 @@ export async function PATCH(
       where: { key: params.key },
       update: {
         value: data.value,
-        description: data.description,
+        label: data.label,
+        group: data.group,
+        type: data.type,
       },
       create: {
         key: params.key,
         value: data.value,
-        description: data.description,
+        label: data.label || params.key,
+        group: data.group || "general",
+        type: data.type || "text",
       },
     });
     return NextResponse.json(content);
   } catch (error) {
+    console.error("SiteContent Error:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

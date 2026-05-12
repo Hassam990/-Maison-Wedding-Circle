@@ -15,10 +15,12 @@ export async function PATCH(
 
   try {
     const data = await req.json();
-    const faq = await db.fAQ.update({
+    const faq = await db.faqItem.update({
       where: { id: params.id },
       data: {
-        ...data,
+        question: data.question,
+        answer: data.answer,
+        category: data.category,
         sortOrder: data.sortOrder !== undefined ? Number(data.sortOrder) : undefined,
         isActive: data.isActive !== undefined ? Boolean(data.isActive) : undefined,
       },
@@ -39,7 +41,7 @@ export async function DELETE(
   }
 
   try {
-    await db.fAQ.delete({
+    await db.faqItem.delete({
       where: { id: params.id },
     });
     return new NextResponse(null, { status: 204 });
