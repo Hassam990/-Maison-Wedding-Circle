@@ -29,6 +29,7 @@ export default async function VendorsPage({ searchParams }: VendorDirectoryPageP
     filters.push({
       category: {
         contains: category,
+        mode: 'insensitive',
       },
     });
   }
@@ -37,6 +38,7 @@ export default async function VendorsPage({ searchParams }: VendorDirectoryPageP
     filters.push({
       city: {
         contains: city,
+        mode: 'insensitive',
       },
     });
   }
@@ -47,21 +49,25 @@ export default async function VendorsPage({ searchParams }: VendorDirectoryPageP
         {
           businessName: {
             contains: search,
+            mode: 'insensitive',
           },
         },
         {
           category: {
             contains: search,
+            mode: 'insensitive',
           },
         },
         {
           city: {
             contains: search,
+            mode: 'insensitive',
           },
         },
         {
           bio: {
             contains: search,
+            mode: 'insensitive',
           },
         },
       ],
