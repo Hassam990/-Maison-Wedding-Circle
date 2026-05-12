@@ -1,10 +1,13 @@
 import 'dotenv/config'
 import { PrismaClient, BoostType, AdPlacement } from '@prisma/client'
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
-import BetterSqlite3 from 'better-sqlite3'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
 import bcrypt from 'bcrypt'
 
-const adapter = new PrismaBetterSqlite3({ url: 'file:./dev.db' })
+// Use the same Prisma 7 adapter pattern as the main app
+const connectionString = process.env.DATABASE_URL
+const pool = new Pool({ connectionString })
+const adapter = new PrismaPg(pool)
 const prisma = new PrismaClient({ adapter })
 
 async function main() {
@@ -67,10 +70,11 @@ async function main() {
     { city: 'New Jersey', state: 'NJ' },
   ]
   for (const city of citiesData) {
+    const id = `city_${city.city.toLowerCase()}`
     await prisma.serviceCity.upsert({
-      where: { id: `city_${city.city.toLowerCase()}` },
+      where: { id },
       update: city,
-      create: { ...city, id: `city_${city.city.toLowerCase()}` }
+      create: { ...city, id }
     })
   }
 
@@ -126,11 +130,12 @@ async function main() {
       create: { userId: user.id, eventType: c.ev, eventDate: c.date, city: c.city, budget: c.budget }
     })
     
-    // Add initial consultation record to match the HTML requirements
+    // Add initial consultation record
+    const consId = `cons_${user.id}`
     await prisma.consultation.upsert({
-        where: { id: `cons_${user.id}` },
+        where: { id: consId },
         update: { status: c.status },
-        create: { id: `cons_${user.id}`, coupleId: cp.id, status: c.status }
+        create: { id: consId, coupleId: cp.id, status: c.status }
     })
   }
 
@@ -146,41 +151,6 @@ async function main() {
       where: { id: pkg.id },
       update: pkg,
       create: pkg
-    })
-  }
-
-  // Active Boosts (seeded):
-  const dreamDecor = vendorProfilesList.find(v => v.businessName === 'Dream Decor Atlanta')
-  const noorStudios = vendorProfilesList.find(v => v.businessName === 'Noor Studios')
-  
-  if (dreamDecor) {
-    await prisma.adBoost.create({
-      data: {
-        vendorId: dreamDecor.id,
-        packageId: 'pkg_featured_top',
-        boostType: BoostType.FEATURED_TOP,
-        placement: AdPlacement.CATEGORY_PAGE,
-        startDate: new Date(),
-        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        amountPaid: 29,
-        impressions: 200,
-        clicks: 18
-      }
-    })
-  }
-  if (noorStudios) {
-    await prisma.adBoost.create({
-      data: {
-        vendorId: noorStudios.id,
-        packageId: 'pkg_category_spotlight',
-        boostType: BoostType.CATEGORY_SPOTLIGHT,
-        placement: AdPlacement.CATEGORY_PAGE,
-        startDate: new Date(),
-        endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-        amountPaid: 49,
-        impressions: 340,
-        clicks: 31
-      }
     })
   }
 
@@ -212,7 +182,7 @@ async function main() {
   for (const item of contentMap) {
     await prisma.siteContent.upsert({
       where: { key: item.key },
-      update: item,
+      update: { value: item.value, label: item.label, group: item.group },
       create: item
     })
   }
@@ -222,11 +192,6 @@ async function main() {
     { name: 'Sana & Usman', location: 'Atlanta GA', eventType: 'Wedding', quote: 'We had no idea where to start. Maison connected us with our dream team in days.', rating: 5 },
     { name: 'Priya & Rahul', location: 'New York NY', eventType: 'Wedding', quote: 'Every vendor they suggested was professional and understood our South Asian traditions.', rating: 5 },
     { name: 'Hina & Fahad', location: 'Dallas TX', eventType: 'Wedding', quote: 'The budget tracker and checklist kept us sane during 8 months of planning.', rating: 5 },
-    { name: 'Nadia & Raza', location: 'Houston TX', eventType: 'Wedding', quote: 'Our photographer from their network literally made us cry — in the best way.', rating: 5 },
-    { name: 'Amira & Junaid', location: 'Chicago IL', eventType: 'Reception', quote: 'They coordinated between all 6 vendors so we didn\'t have to.', rating: 4 },
-    { name: 'Zoya & Bilal', location: 'Atlanta GA', eventType: 'Mehndi', quote: 'The mehndi decor was exactly what we pinned on our mood board. Incredible.', rating: 5 },
-    { name: 'Bushra', location: 'Caterer, Atlanta GA', eventType: 'Vendor', quote: 'As a vendor, the leads from Maison are genuine and pre-qualified.', rating: 5 },
-    { name: 'Encore Entertainment', location: 'DJ, Atlanta GA', eventType: 'Vendor', quote: 'We got 3 bookings in our first month on the platform.', rating: 5 },
   ]
   for (const t of testimonials) {
     await prisma.testimonial.create({ data: t })
@@ -235,15 +200,7 @@ async function main() {
   console.log('Seeding FAQ...')
   const faqItems = [
     { question: 'How do you match us with vendors?', answer: 'We review your event details, style, budget, and city then personally introduce you to 2-3 hand-picked vendors per category from our verified network.', category: 'couples' },
-    { question: 'Is there a fee for couples?', answer: 'No — our service is completely free for couples. Vendors pay to be part of our network.', category: 'couples' },
-    { question: 'How long does matching take?', answer: 'Most couples receive vendor introductions within 24-48 hours of submitting their planning form.', category: 'couples' },
-    { question: 'What cities do you serve?', answer: 'Currently Atlanta GA, New York NY, Dallas TX, Houston TX, Chicago IL, Washington DC, Los Angeles CA, and New Jersey NJ.', category: 'couples' },
-    { question: 'How do I apply to join?', answer: 'Click "Apply to Join" on the For Vendors page and submit your application. Our team reviews within 3-5 business days.', category: 'vendors' },
-    { question: 'Do you take commissions?', answer: 'Never. You keep 100% of what couples pay you. We charge a flat monthly subscription for access to the network.', category: 'vendors' },
-    { question: 'What is the difference between plans?', answer: 'Free gets you a basic listing. Professional adds priority support and more leads. Premium includes a Featured badge and homepage visibility.', category: 'vendors' },
-    { question: 'Can I advertise to appear at the top of search results?', answer: 'Yes — our Boost & Advertise system lets you purchase featured placements starting at $29.', category: 'vendors' },
-    { question: 'What does the Professional plan include?', answer: 'Verified badge, unlimited gallery images, lead management tools, analytics dashboard, and priority support for $49/month.', category: 'pricing' },
-    { question: 'What does the Premium plan include?', answer: 'Everything in Professional plus a Featured badge, Category Spotlight, newsletter inclusion, and account manager for $99/month.', category: 'pricing' },
+    { question: 'Is there a fee for couples?', answer: 'No — our service is completely free for couples.', category: 'couples' },
   ]
   for (const faq of faqItems) {
     await prisma.faqItem.create({ data: faq })
@@ -252,4 +209,14 @@ async function main() {
   console.log('Seed completed successfully.')
 }
 
-main().then(() => prisma.$disconnect()).catch(e => { console.error(e); prisma.$disconnect(); process.exit(1) })
+main()
+  .then(async () => {
+    await prisma.$disconnect()
+    await pool.end()
+  })
+  .catch(async (e) => {
+    console.error(e)
+    await prisma.$disconnect()
+    await pool.end()
+    process.exit(1)
+  })
