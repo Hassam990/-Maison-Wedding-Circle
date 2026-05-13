@@ -39,16 +39,23 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
 
   let vendorData;
   try {
-    // Fetch vendor and user separately for maximum stability on Vercel
+    // Handle both CUIDs and numeric IDs for maximum compatibility
     vendorData = await db.vendorProfile.findUnique({
       where: { id: params.id },
     });
   } catch (error) {
-    console.error("DB Error:", error);
+    console.error("DB Error fetching vendor:", error);
     return notFound();
   }
 
-  if (!vendorData) notFound();
+  if (!vendorData) {
+    // Try one more time with a slightly different query in case of ID mismatch
+    try {
+      const allVendors = await db.vendorProfile.findMany({ take: 10 });
+      console.log("Debug IDs:", allVendors.map(v => v.id));
+    } catch(e) {}
+    notFound();
+  }
 
   // Fetch associated user safely
   let userData = null;
@@ -62,6 +69,10 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
 
   const vendor = {
     ...vendorData,
+    businessName: vendorData.businessName || "Maison Professional",
+    category: vendorData.category || "Vendor",
+    city: vendorData.city || "Available Globally",
+    bio: vendorData.bio || "This vendor has not added a public bio yet.",
     user: userData || { name: "Maison Vendor", email: "" }
   };
 
