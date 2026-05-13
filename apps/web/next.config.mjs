@@ -12,6 +12,12 @@ const nextConfig = {
       }
     ],
   },
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion', 'gsap', 'ogl'],
+  },
+  swcMinify: true,
+  poweredByHeader: false,
+  reactStrictMode: true,
   async redirects() {
     return [
       {

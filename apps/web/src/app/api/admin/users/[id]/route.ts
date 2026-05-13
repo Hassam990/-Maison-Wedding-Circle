@@ -9,45 +9,39 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   const session = await getServerSession(authOptions);
-  
   if (!session || (session.user.role !== "SUPER_ADMIN" && session.user.role !== "ADMIN")) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
   try {
-    const { verified } = await req.json();
-    const vendor = await db.vendorProfile.update({
+    const data = await req.json();
+    const user = await db.user.update({
       where: { id: params.id },
-      data: { verified: !!verified },
+      data,
     });
     
-    return NextResponse.json(vendor);
+    return NextResponse.json(user);
   } catch (error) {
-    console.error("Approval error:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
 
-// Keep POST for backwards compatibility if needed, setting to true
-export async function POST(
-  req: Request,
+export async function DELETE(
+  _req: Request,
   { params }: { params: { id: string } }
 ) {
   const session = await getServerSession(authOptions);
-  
   if (!session || (session.user.role !== "SUPER_ADMIN" && session.user.role !== "ADMIN")) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
   try {
-    const vendor = await db.vendorProfile.update({
+    await db.user.delete({
       where: { id: params.id },
-      data: { verified: true },
     });
     
-    return NextResponse.json(vendor);
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
-    console.error("Approval error:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

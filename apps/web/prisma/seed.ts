@@ -21,8 +21,8 @@ async function main() {
   // 2. Create Super Admin
   const adminUser = await prisma.user.upsert({ 
     where: { email: 'admin@maisoncircle.com' }, 
-    update: { passwordHash: adminHash, role: 'SUPER_ADMIN', name: 'Admin' }, 
-    create: { name: 'Admin', email: 'admin@maisoncircle.com', passwordHash: adminHash, role: 'SUPER_ADMIN' }
+    update: { passwordHash: adminHash, role: 'SUPER_ADMIN', name: 'Lister' }, 
+    create: { name: 'Lister', email: 'admin@maisoncircle.com', passwordHash: adminHash, role: 'SUPER_ADMIN' }
   })
 
   // 3. Create Staff Admins

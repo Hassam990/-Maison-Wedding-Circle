@@ -1,15 +1,17 @@
-"use client";
-
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
 import { SlidingNumber } from '@/components/animate-ui/primitives/texts/sliding-number';
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
-import { toast } from "sonner";
 import SmoothSlider from "@/components/ui/SmoothSlider";
+import { getSiteContent } from "@/lib/cms";
+import ConsultationForm from "@/components/forms/ConsultationForm";
 
-export default function Home() {
+export const dynamic = 'force-dynamic';
+
+export default async function Home() {
+  const content = await getSiteContent("homepage");
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* HERO SECTION */}
@@ -30,11 +32,10 @@ export default function Home() {
           
           <ScrollReveal delay={0.1} className="flex-1 text-center lg:text-left space-y-6">
             <h1 className="text-5xl lg:text-7xl font-bold text-burgundy tracking-tight leading-tight drop-shadow-md">
-              Your story deserves more than a<br />
-              <span className="text-primary">booking website.</span>
+              {content.hero_headline || "Your story deserves more than a booking website."}
             </h1>
             <p className="text-lg text-foreground max-w-xl mx-auto lg:mx-0 font-medium">
-              We curate, match, coordinate, and simplify your wedding. Curated South Asian weddings across the USA.
+              {content.hero_subtext || "We curate, match, coordinate, and simplify your wedding. Curated South Asian weddings across the USA."}
             </p>
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-4">
               <Button variant="primary" className="h-12 px-8 text-lg hover:scale-105 transition-transform shadow-lg shadow-primary/30">Start Planning</Button>
@@ -51,7 +52,9 @@ export default function Home() {
                <div className="flex flex-col">
                  <div className="flex text-primary">★★★★★</div>
                  <span className="text-sm font-bold text-burgundy flex items-center gap-1">
-                    Trusted by <span className="text-primary text-xl mx-0.5"><SlidingNumber number={500} />+</span> South Asian Families
+                    {content.hero_trust_badge?.split('500')[0] || "Trusted by "} 
+                    <span className="text-primary text-xl mx-0.5"><SlidingNumber number={500} />+</span> 
+                    {content.hero_trust_badge?.split('500+')[1] || " South Asian Families"}
                  </span>
                </div>
             </div>
@@ -61,11 +64,11 @@ export default function Home() {
             <Card>
               <CardHeader className="text-center pb-4">
                  <span className="text-xs uppercase tracking-widest text-primary font-bold mb-1">For Vendors</span>
-                 <CardTitle className="text-3xl text-burgundy">Join Our Network</CardTitle>
+                 <CardTitle className="text-3xl text-burgundy">{content.vendor_join_headline || "Join Our Network"}</CardTitle>
               </CardHeader>
               <CardContent className="pt-6 space-y-4">
                 <p className="text-sm text-foreground/80 text-center mb-6 font-medium">
-                  Get high-quality leads. No commissions taken.
+                  {content.vendor_join_subtext || "Get high-quality leads. No commissions taken."}
                 </p>
                 <ul className="space-y-4 mb-8">
                   {['Caterers', 'Decorators', 'Photographers', 'Makeup Artists', 'DJs & Entertainment'].map(cat => (
@@ -99,7 +102,7 @@ export default function Home() {
       <section className="py-24 bg-transparent">
         <ScrollReveal className="container mx-auto px-4 lg:px-8 text-center">
           <span className="text-sm uppercase tracking-widest text-primary font-bold mb-2 block">How It Works</span>
-          <h2 className="text-4xl text-burgundy font-bold mb-16">Simple, Guided, Stress-Free</h2>
+          <h2 className="text-4xl text-burgundy font-bold mb-16">{content.how_it_works_title || "Simple, Guided, Stress-Free"}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
              <div className="absolute top-12 left-[16%] right-[16%] h-px bg-primary/30 hidden md:block border-dashed border-t" />
@@ -127,7 +130,7 @@ export default function Home() {
       <section className="py-24 bg-transparent text-center">
          <ScrollReveal className="container mx-auto px-4 lg:px-8">
            <span className="text-sm uppercase tracking-widest text-primary font-bold mb-2 block">Why Choose Maison Wedding Circle?</span>
-           <h2 className="text-4xl text-burgundy font-bold mb-16">Not a Directory. A Guided Wedding Network.</h2>
+           <h2 className="text-4xl text-burgundy font-bold mb-16">{content.why_choose_title || "Not a Directory. A Guided Wedding Network."}</h2>
 
            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
@@ -165,65 +168,7 @@ export default function Home() {
               <h2 className="text-4xl text-burgundy font-bold mb-4">Begin Your Wedding Journey</h2>
               <p className="text-foreground/80 mb-8 font-medium">Tell us about your event and we&apos;ll curate the perfect wedding team for your special day.</p>
               
-              <Card className="p-8 border-none hover:-translate-y-3 hover:shadow-2xl transition-all duration-500">
-                <form 
-                  className="space-y-5"
-                  onSubmit={async (e) => {
-                    e.preventDefault();
-                    const formData = new FormData(e.currentTarget);
-                    const data = Object.fromEntries(formData.entries());
-                    
-                    try {
-                      const res = await fetch("/api/consultation", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(data),
-                      });
-                      if (res.ok) {
-                        toast.success("Consultation scheduled! We will contact you soon.");
-                        (e.target as HTMLFormElement).reset();
-                      } else {
-                        toast.error("Something went wrong. Please try again.");
-                      }
-                    } catch (err) {
-                      toast.error("Failed to submit. Check your connection.");
-                    }
-                  }}
-                >
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-bold mb-1.5 block text-burgundy">Name</label>
-                      <Input name="name" required placeholder="Full Name" className="rounded-xl border-white bg-white/70 backdrop-blur-md h-12 font-medium shadow-sm hover:bg-white/90" />
-                    </div>
-                    <div>
-                      <label className="text-sm font-bold mb-1.5 block text-burgundy">Email</label>
-                      <Input name="email" type="email" required placeholder="Email Address" className="rounded-xl border-white bg-white/70 backdrop-blur-md h-12 font-medium shadow-sm hover:bg-white/90" />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-bold mb-1.5 block text-burgundy">Event Type</label>
-                    <select name="eventType" className="flex h-12 w-full rounded-xl border border-white bg-white/70 backdrop-blur-md px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 shadow-sm transition-all hover:bg-white/90">
-                       <option>Wedding</option>
-                       <option>Mehndi</option>
-                       <option>Reception</option>
-                       <option>Other</option>
-                    </select>
-                  </div>
-                  <div>
-                     <label className="text-sm font-bold mb-1.5 block text-burgundy">Location</label>
-                     <Input name="location" placeholder="City / State" className="rounded-xl border-white bg-white/70 backdrop-blur-md h-12 font-medium shadow-sm hover:bg-white/90 focus:border-primary focus:ring-2 focus:ring-primary/50 transition-all" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-bold mb-1.5 block text-burgundy">Budget Range</label>
-                    <select name="budget" className="flex h-12 w-full rounded-xl border border-white bg-white/70 backdrop-blur-md px-4 py-2 text-sm font-medium shadow-sm hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all">
-                       <option>$20k - $50k</option>
-                       <option>$50k - $100k</option>
-                       <option>$100k - $200k+</option>
-                    </select>
-                  </div>
-                  <Button type="submit" className="w-full mt-6 h-12 text-md font-bold transition-transform hover:scale-[1.03] shadow-lg shadow-primary/20" variant="primary">Begin Your Wedding Journey</Button>
-                </form>
-              </Card>
+              <ConsultationForm />
             </ScrollReveal>
          </div>
       </section>

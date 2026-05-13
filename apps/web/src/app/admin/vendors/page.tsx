@@ -47,11 +47,18 @@ export default function AdminVendorsPage() {
   const fetchVendors = async () => {
     try {
       const res = await fetch("/api/admin/vendors");
+      console.log("Vendors fetch status:", res.status);
       if (res.ok) {
         const data = await res.json();
+        console.log("Vendors data received:", data.length);
         setVendors(data);
+      } else {
+        const text = await res.text();
+        console.error("Vendors fetch failed:", text);
+        toast.error(`Failed to load vendors: ${res.status}`);
       }
     } catch (error) {
+       console.error("Vendors fetch error:", error);
        toast.error("Could not load vendors");
     } finally {
       setLoading(false);

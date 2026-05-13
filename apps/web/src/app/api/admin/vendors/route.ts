@@ -11,14 +11,17 @@ export async function GET() {
   }
 
   try {
+    console.log("Fetching vendors from DB...");
     const vendors = await db.vendorProfile.findMany({
       include: {
         user: { select: { name: true, email: true } }
       },
       orderBy: { createdAt: 'desc' }
     });
+    console.log(`Successfully fetched ${vendors.length} vendors`);
     return NextResponse.json(vendors);
   } catch (error) {
+    console.error("Error fetching vendors:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
