@@ -38,3 +38,36 @@ export async function GET() {
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
+
+export async function POST(req: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session || (session.user.role !== "SUPER_ADMIN" && session.user.role !== "ADMIN")) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  try {
+    const { name, email, password, role } = await req.json();
+    
+    const existing = await db.user.findUnique({ where: { email } });
+    if (existing) {
+      return NextResponse.json({ message: "User already exists" }, { status: 400 });
+    }
+
+    const bcrypt = await import("bcrypt");
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const user = await db.user.create({
+      data: {
+        name,
+        email,
+        passwordHash,
+        role: role || "STAFF_ADMIN",
+      },
+    });
+
+    return NextResponse.json(user);
+  } catch (error) {
+    console.error("Staff creation error:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
+}

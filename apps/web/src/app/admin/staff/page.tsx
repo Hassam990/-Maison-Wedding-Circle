@@ -19,26 +19,60 @@ import {
 import { toast } from "sonner";
 
 export default function StaffManagementPage() {
+
   const [isAdding, setIsAdding] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [staff, setStaff] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "MaisonStaff2026!",
+    role: "STAFF_ADMIN"
+  });
+
+  const fetchStaff = async () => {
+    try {
+      const res = await fetch("/api/admin/staff");
+      if (res.ok) {
+        const data = await res.json();
+        setStaff(data);
+      }
+    } catch (error) {
+      toast.error("Failed to load staff");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchStaff = async () => {
-      try {
-        const res = await fetch("/api/admin/staff");
-        if (res.ok) {
-          const data = await res.json();
-          setStaff(data);
-        }
-      } catch (error) {
-        toast.error("Failed to load staff");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchStaff();
   }, []);
+
+  const handleAddStaff = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/admin/staff", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        toast.success("Staff member added successfully");
+        setIsAdding(false);
+        setFormData({ name: "", email: "", password: "MaisonStaff2026!", role: "STAFF_ADMIN" });
+        fetchStaff();
+      } else {
+        const err = await res.json();
+        toast.error(err.message || "Failed to add staff");
+      }
+    } catch (error) {
+      toast.error("An error occurred");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="space-y-8 font-inter">
@@ -117,10 +151,10 @@ export default function StaffManagementPage() {
               </h3>
               <div className="space-y-6 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[1px] before:bg-burgundy/5">
                  {[
-                   { user: "Aisha Mirza", action: "Updated Consultation #412", time: "2h ago" },
-                   { user: "Bilal Siddiqui", action: "Approved Vendor 'Noor Studios'", time: "4h ago" },
-                   { user: "Admin", action: "Sent Broadcast to Vendors", time: "1d ago" },
-                   { user: "Aisha Mirza", action: "Deleted Review #182", time: "1d ago" },
+                   { user: "Lister", action: "Updated Homepage CMS", time: "Just now" },
+                   { user: "Dawood Staff 2", action: "Approved Vendor 'Noor Studios'", time: "4h ago" },
+                   { user: "Huma Mea Staff 2", action: "Responded to Consultation", time: "1d ago" },
+                   { user: "Lister", action: "Exported Vendor List", time: "2d ago" },
                  ].map((log, i) => (
                    <div key={i} className="relative pl-8">
                       <div className="absolute left-0 top-1 w-[22px] h-[22px] rounded-full bg-white border border-burgundy/5 p-1 flex items-center justify-center">
@@ -147,6 +181,70 @@ export default function StaffManagementPage() {
            </div>
         </div>
       </div>
+
+      {/* Add Staff Modal */}
+      {isAdding && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-burgundy/40 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-md rounded-[40px] shadow-2xl overflow-hidden border border-[#C9940A]/20 p-8 space-y-6">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-playfair font-bold text-burgundy text-center">Add Internal Staff</h2>
+              <p className="text-xs text-burgundy/60 italic text-center">Create a new administrative account</p>
+            </div>
+            
+            <form onSubmit={handleAddStaff} className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-burgundy/40 uppercase tracking-widest px-2">Full Name</label>
+                <input 
+                  required
+                  value={formData.name}
+                  onChange={e => setFormData({...formData, name: e.target.value})}
+                  className="w-full p-4 bg-[#FFFDF5] border border-burgundy/10 rounded-2xl text-sm font-bold outline-none focus:border-[#C9940A]"
+                  placeholder="John Doe"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-burgundy/40 uppercase tracking-widest px-2">Email Address</label>
+                <input 
+                  required
+                  type="email"
+                  value={formData.email}
+                  onChange={e => setFormData({...formData, email: e.target.value})}
+                  className="w-full p-4 bg-[#FFFDF5] border border-burgundy/10 rounded-2xl text-sm font-bold outline-none focus:border-[#C9940A]"
+                  placeholder="staff@maisoncircle.com"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-burgundy/40 uppercase tracking-widest px-2">Role</label>
+                <select 
+                  value={formData.role}
+                  onChange={e => setFormData({...formData, role: e.target.value})}
+                  className="w-full p-4 bg-[#FFFDF5] border border-burgundy/10 rounded-2xl text-sm font-bold outline-none focus:border-[#C9940A]"
+                >
+                  <option value="STAFF_ADMIN">Staff Admin</option>
+                  <option value="ADMIN">Admin</option>
+                  <option value="SUPER_ADMIN">Super Admin</option>
+                </select>
+              </div>
+              <div className="pt-4 flex gap-3">
+                 <button 
+                  type="button"
+                  onClick={() => setIsAdding(false)}
+                  className="flex-1 py-3 bg-burgundy/5 text-burgundy font-black text-xs rounded-full hover:bg-burgundy/10 transition-all"
+                 >
+                   Cancel
+                 </button>
+                 <button 
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-1 py-3 bg-[#C9940A] text-white font-black text-xs rounded-full hover:bg-[#a57808] transition-all shadow-lg disabled:opacity-50"
+                 >
+                   {isSubmitting ? "Creating..." : "Create Account"}
+                 </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
