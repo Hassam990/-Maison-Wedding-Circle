@@ -1,4 +1,6 @@
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
@@ -16,32 +18,33 @@ type VendorDetailPageProps = {
 };
 
 function formatDate(value: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(value);
+  try {
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(value);
+  } catch (e) {
+    return "N/A";
+  }
 }
 
 export default async function VendorDetailPage({ params }: VendorDetailPageProps) {
-  const session = await getServerSession(authOptions);
+  // Ensure we have an ID
+  if (!params.id) notFound();
+
+  let session = null;
+  try {
+    session = await getServerSession(authOptions);
+  } catch (e) {
+    console.warn("Auth session fetch failed in vendor profile");
+  }
 
   let vendor;
   try {
     vendor = await db.vendorProfile.findUnique({
-      where: {
-        id: params.id,
-      },
-      select: {
-        id: true,
-        businessName: true,
-        category: true,
-        city: true,
-        bio: true,
-        verified: true,
-        plan: true,
-        rating: true,
-        createdAt: true,
+      where: { id: params.id },
+      include: {
         user: {
           select: {
             name: true,
@@ -51,8 +54,15 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
       },
     });
   } catch (error) {
-    console.error("Failed to fetch vendor:", error);
-    notFound();
+    console.error("CRITICAL: Failed to fetch vendor profile from DB:", error);
+    // In production, a DB error should show a friendly message or 404
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+        <h1 className="text-2xl font-bold text-burgundy">Profile Temporarily Unavailable</h1>
+        <p className="text-stone-600">We encountered a connection issue. Please refresh the page.</p>
+        <Link href="/vendors" className="text-primary underline">Back to Directory</Link>
+      </div>
+    );
   }
 
   if (!vendor) {
