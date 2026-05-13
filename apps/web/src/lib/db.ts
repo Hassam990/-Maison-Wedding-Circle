@@ -7,15 +7,16 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 // Use direct connection URL for the pool to avoid pgbouncer issues in serverless
-const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL?.replace(":6543/", ":5432/").replace("?pgbouncer=true", "");
+const rawUrl = process.env.DIRECT_URL || process.env.DATABASE_URL;
 
-// Optimized for Vercel Serverless Functions but robust for dev
+// Clean URL: ensure we use the direct port 5432 for the adapter if pgbouncer isn't needed
+const connectionString = rawUrl?.replace(":6543/", ":5432/").split('?')[0];
+
 const pool = new Pool({ 
   connectionString,
-  max: process.env.NODE_ENV === "production" ? 1 : 10, // More connections in dev
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
-  ssl: connectionString?.includes("supabase") ? { rejectUnauthorized: false } : undefined
+  max: process.env.NODE_ENV === 'development' ? 10 : 2, // Slightly more room for Vercel
+  ssl: { rejectUnauthorized: false },
+  connectionTimeoutMillis: 10000, // 10s timeout
 });
 
 const adapter = new PrismaPg(pool);
