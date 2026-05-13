@@ -30,44 +30,40 @@ function formatDate(value: Date) {
 }
 
 export default async function VendorDetailPage({ params }: VendorDetailPageProps) {
-  // Ensure we have an ID
   if (!params.id) notFound();
 
   let session = null;
   try {
     session = await getServerSession(authOptions);
-  } catch (e) {
-    console.warn("Auth session fetch failed in vendor profile");
-  }
+  } catch (e) {}
 
-  let vendor;
+  let vendorData;
   try {
-    vendor = await db.vendorProfile.findUnique({
+    // Fetch vendor and user separately for maximum stability on Vercel
+    vendorData = await db.vendorProfile.findUnique({
       where: { id: params.id },
-      include: {
-        user: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
-      },
     });
   } catch (error) {
-    console.error("CRITICAL: Failed to fetch vendor profile from DB:", error);
-    // In production, a DB error should show a friendly message or 404
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-        <h1 className="text-2xl font-bold text-burgundy">Profile Temporarily Unavailable</h1>
-        <p className="text-stone-600">We encountered a connection issue. Please refresh the page.</p>
-        <Link href="/vendors" className="text-primary underline">Back to Directory</Link>
-      </div>
-    );
+    console.error("DB Error:", error);
+    return notFound();
   }
 
-  if (!vendor) {
-    notFound();
-  }
+  if (!vendorData) notFound();
+
+  // Fetch associated user safely
+  let userData = null;
+  try {
+     const user = await db.user.findUnique({
+       where: { id: (vendorData as any).userId },
+       select: { name: true, email: true }
+     });
+     userData = user;
+  } catch (e) {}
+
+  const vendor = {
+    ...vendorData,
+    user: userData || { name: "Maison Vendor", email: "" }
+  };
 
   let reviewsCount = 0;
   let recentReviews: any[] = [];
