@@ -31,6 +31,7 @@ interface Vendor {
   businessName: string;
   category: string;
   city: string;
+  bio: string;
   verified: boolean;
   plan: string;
   rating: number;
@@ -46,6 +47,7 @@ interface VendorFormData {
   businessName: string;
   category: string;
   city: string;
+  bio: string;
   verified: boolean;
   plan: string;
   rating: number;
@@ -57,6 +59,7 @@ const initialFormData: VendorFormData = {
   businessName: "",
   category: "",
   city: "",
+  bio: "",
   verified: false,
   plan: "FREE",
   rating: 0,
@@ -129,12 +132,13 @@ export default function AdminVendorsPage() {
     setIsModalOpen(true);
   };
 
-  const openEditModal = (vendor: Vendor) => {
+  const openEditModal = (vendor: any) => {
     setEditingVendor(vendor);
     setFormData({
-      businessName: vendor.businessName,
-      category: vendor.category,
-      city: vendor.city,
+      businessName: vendor.businessName || "",
+      category: vendor.category || "",
+      city: vendor.city || "",
+      bio: vendor.bio || "",
       verified: vendor.verified,
       plan: vendor.plan,
       rating: vendor.rating,
@@ -155,6 +159,7 @@ export default function AdminVendorsPage() {
             businessName: formData.businessName,
             category: formData.category,
             city: formData.city,
+            bio: formData.bio,
             verified: formData.verified,
             plan: formData.plan,
             rating: formData.rating,
@@ -335,72 +340,83 @@ export default function AdminVendorsPage() {
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-bold text-[#3D0C1A] mb-2">Business Name</label>
-                  <Input 
-                    required
-                    value={formData.businessName}
-                    onChange={(e) => setFormData({...formData, businessName: e.target.value})}
-                    placeholder="Enter business name"
-                    className="border-[#dbb84a] focus:ring-[#C9940A]"
-                  />
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-bold text-[#3D0C1A] mb-2">Business Name</label>
+                    <Input 
+                      required
+                      value={formData.businessName}
+                      onChange={(e) => setFormData({...formData, businessName: e.target.value})}
+                      placeholder="Enter business name"
+                      className="border-[#dbb84a] focus:ring-[#C9940A]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-[#3D0C1A] mb-2">Category</label>
+                    <Input 
+                      required
+                      value={formData.category}
+                      onChange={(e) => setFormData({...formData, category: e.target.value})}
+                      placeholder="e.g., Catering, Photography"
+                      className="border-[#dbb84a] focus:ring-[#C9940A]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-[#3D0C1A] mb-2">City</label>
+                    <Input 
+                      required
+                      value={formData.city}
+                      onChange={(e) => setFormData({...formData, city: e.target.value})}
+                      placeholder="e.g., Atlanta GA"
+                      className="border-[#dbb84a] focus:ring-[#C9940A]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-[#3D0C1A] mb-2">Plan</label>
+                    <select 
+                      required
+                      value={formData.plan}
+                      onChange={(e) => setFormData({...formData, plan: e.target.value})}
+                      className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none"
+                    >
+                      <option value="FREE">FREE</option>
+                      <option value="PROFESSIONAL">PROFESSIONAL</option>
+                      <option value="PREMIUM">PREMIUM</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-[#3D0C1A] mb-2">Rating</label>
+                    <Input 
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="5"
+                      value={formData.rating}
+                      onChange={(e) => setFormData({...formData, rating: parseFloat(e.target.value) || 0})}
+                      placeholder="0-5"
+                      className="border-[#dbb84a] focus:ring-[#C9940A]"
+                    />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <input 
+                      type="checkbox"
+                      id="verified"
+                      checked={formData.verified}
+                      onChange={(e) => setFormData({...formData, verified: e.target.checked})}
+                      className="w-5 h-5 text-[#C9940A] border-[#dbb84a] focus:ring-[#C9940A]"
+                    />
+                    <label htmlFor="verified" className="text-sm font-bold text-[#3D0C1A]">Verified Vendor</label>
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-[#3D0C1A] mb-2">Category</label>
-                  <Input 
-                    required
-                    value={formData.category}
-                    onChange={(e) => setFormData({...formData, category: e.target.value})}
-                    placeholder="e.g., Catering, Photography"
-                    className="border-[#dbb84a] focus:ring-[#C9940A]"
+                  <label className="block text-sm font-bold text-[#3D0C1A] mb-2">Bio / Description</label>
+                  <textarea
+                    value={formData.bio}
+                    onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                    placeholder="Tell us about this vendor..."
+                    className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none min-h-[120px]"
                   />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-[#3D0C1A] mb-2">City</label>
-                  <Input 
-                    required
-                    value={formData.city}
-                    onChange={(e) => setFormData({...formData, city: e.target.value})}
-                    placeholder="e.g., Atlanta GA"
-                    className="border-[#dbb84a] focus:ring-[#C9940A]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-[#3D0C1A] mb-2">Plan</label>
-                  <select 
-                    required
-                    value={formData.plan}
-                    onChange={(e) => setFormData({...formData, plan: e.target.value})}
-                    className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none"
-                  >
-                    <option value="FREE">FREE</option>
-                    <option value="PROFESSIONAL">PROFESSIONAL</option>
-                    <option value="PREMIUM">PREMIUM</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-[#3D0C1A] mb-2">Rating</label>
-                  <Input 
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="5"
-                    value={formData.rating}
-                    onChange={(e) => setFormData({...formData, rating: parseFloat(e.target.value) || 0})}
-                    placeholder="0-5"
-                    className="border-[#dbb84a] focus:ring-[#C9940A]"
-                  />
-                </div>
-                <div className="flex items-center gap-3">
-                  <input 
-                    type="checkbox"
-                    id="verified"
-                    checked={formData.verified}
-                    onChange={(e) => setFormData({...formData, verified: e.target.checked})}
-                    className="w-5 h-5 text-[#C9940A] border-[#dbb84a] focus:ring-[#C9940A]"
-                  />
-                  <label htmlFor="verified" className="text-sm font-bold text-[#3D0C1A]">Verified Vendor</label>
                 </div>
               </div>
               
