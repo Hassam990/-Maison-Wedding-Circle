@@ -345,10 +345,10 @@ export default function AdminVendorsPage() {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-[32px] w-full max-w-2xl shadow-2xl">
-            <div className="px-8 py-6 border-b border-[#dbb84a] flex items-center justify-between">
-              <h2 className="text-2xl font-playfair font-bold text-[#3D0C1A]">
+        <div className="fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
+          <div className="bg-white rounded-t-[32px] sm:rounded-[32px] w-full sm:max-w-2xl sm:max-h-[90vh] shadow-2xl flex flex-col max-h-[85vh]">
+            <div className="px-6 py-4 sm:px-8 sm:py-6 border-b border-[#dbb84a] flex items-center justify-between sticky top-0 bg-white">
+              <h2 className="text-xl sm:text-2xl font-playfair font-bold text-[#3D0C1A]">
                 {editingVendor ? "Edit Vendor" : "Add New Vendor"}
               </h2>
               <button 
@@ -358,9 +358,9 @@ export default function AdminVendorsPage() {
                 <X className="w-6 h-6 text-[#8a6200]" />
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-8 space-y-6">
+            <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6 overflow-y-auto flex-1">
               <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label className="block text-sm font-bold text-[#3D0C1A] mb-2">Business Name</label>
                     <Input 
@@ -434,14 +434,14 @@ export default function AdminVendorsPage() {
                     value={formData.bio}
                     onChange={(e) => setFormData({...formData, bio: e.target.value})}
                     placeholder="Tell us about this vendor..."
-                    className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none min-h-[120px]"
+                    className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none min-h-[100px] sm:min-h-[120px]"
                   />
                 </div>
                 
                 {/* Admin-only contact fields */}
                 <div className="pt-4 border-t border-[#dbb84a]">
                   <h3 className="text-lg font-bold text-[#3D0C1A] mb-4">Admin-Only Contact Details</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                     <div>
                       <label className="block text-sm font-bold text-[#8a6200] mb-2">Phone Number</label>
                       <Input 
@@ -477,7 +477,7 @@ export default function AdminVendorsPage() {
               {editingVendor && (
                 <div className="pt-4 border-t border-[#dbb84a]">
                   <h3 className="text-lg font-bold text-[#3D0C1A] mb-4">Account Info (Read Only)</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-[#8a6200] mb-1">Email</label>
                       <Input 
@@ -498,16 +498,16 @@ export default function AdminVendorsPage() {
                 </div>
               )}
 
-              <div className="flex items-center justify-end gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4 sticky bottom-0 bg-white pt-4">
                 <Button 
                   type="button" 
                   onClick={() => setIsModalOpen(false)}
                   variant="secondary"
-                  className="border-[#dbb84a] text-[#3D0C1A] hover:bg-[#fffcf0]"
+                  className="border-[#dbb84a] text-[#3D0C1A] hover:bg-[#fffcf0] flex-1 sm:flex-none"
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-[#3D0C1A] hover:bg-[#5a122a] text-white">
+                <Button type="submit" className="bg-[#3D0C1A] hover:bg-[#5a122a] text-white flex-1 sm:flex-none">
                   {editingVendor ? "Save Changes" : "Add Vendor"}
                 </Button>
               </div>
