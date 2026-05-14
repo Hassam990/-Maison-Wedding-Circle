@@ -222,40 +222,31 @@ async function main() {
       update: { passwordHash: vendorHash, role: 'VENDOR' },
       create: { email: v.email, name: v.name, passwordHash: vendorHash, role: 'VENDOR' }
     })
+    const vendorData: any = {
+      businessName: v.business, 
+      category: v.category, 
+      city: v.city, 
+      plan: v.plan, 
+      verified: v.verified, 
+      rating: v.rating,
+      bio: v.bio
+    };
+    
+    // Only add new fields if they might exist in the DB
+    if (v.priceRange) vendorData.priceRange = v.priceRange;
+    if (v.servicesOffered) vendorData.servicesOffered = v.servicesOffered;
+    if (v.galleryPhotos) vendorData.galleryPhotos = v.galleryPhotos;
+    if (v.isFeatured !== undefined) vendorData.isFeatured = v.isFeatured;
+    if (v.logoUrl) vendorData.logoUrl = v.logoUrl;
+    if (v.instagramUrl) vendorData.instagramUrl = v.instagramUrl;
+    if (v.websiteUrl) vendorData.websiteUrl = v.websiteUrl;
+    
     const profile = await prisma.vendorProfile.upsert({
       where: { userId: user.id },
-      update: { 
-        businessName: v.business, 
-        category: v.category, 
-        city: v.city, 
-        plan: v.plan, 
-        verified: v.verified, 
-        rating: v.rating,
-        bio: v.bio,
-        priceRange: v.priceRange,
-        servicesOffered: v.servicesOffered,
-        galleryPhotos: v.galleryPhotos,
-        isFeatured: v.isFeatured,
-        logoUrl: v.logoUrl,
-        instagramUrl: v.instagramUrl,
-        websiteUrl: v.websiteUrl
-      },
+      update: vendorData,
       create: { 
-        userId: user.id, 
-        businessName: v.business, 
-        category: v.category, 
-        city: v.city, 
-        plan: v.plan, 
-        verified: v.verified, 
-        rating: v.rating,
-        bio: v.bio,
-        priceRange: v.priceRange,
-        servicesOffered: v.servicesOffered,
-        galleryPhotos: v.galleryPhotos,
-        isFeatured: v.isFeatured,
-        logoUrl: v.logoUrl,
-        instagramUrl: v.instagramUrl,
-        websiteUrl: v.websiteUrl
+        userId: user.id,
+        ...vendorData
       }
     })
     vendorProfilesList.push(profile)
@@ -276,10 +267,23 @@ async function main() {
       update: { passwordHash: coupleHash, role: 'COUPLE' },
       create: { email: c.email, name: c.name, passwordHash: coupleHash, role: 'COUPLE' }
     })
+    const coupleData: any = {
+      eventType: c.ev, 
+      eventDate: c.date, 
+      city: c.city, 
+      budget: c.budget
+    };
+    
+    // Only add new field if it might exist in the DB
+    if (c.tier) coupleData.weddingTier = c.tier;
+    
     const cp = await prisma.coupleProfile.upsert({
       where: { userId: user.id },
-      update: { eventType: c.ev, eventDate: c.date, city: c.city, budget: c.budget, weddingTier: c.tier },
-      create: { userId: user.id, eventType: c.ev, eventDate: c.date, city: c.city, budget: c.budget, weddingTier: c.tier }
+      update: coupleData,
+      create: { 
+        userId: user.id,
+        ...coupleData
+      }
     })
     
     // Add initial consultation record
