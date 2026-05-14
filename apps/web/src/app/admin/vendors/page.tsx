@@ -36,6 +36,9 @@ interface Vendor {
   plan: string;
   rating: number;
   userId: string;
+  adminPhone?: string | null;
+  adminWhatsApp?: string | null;
+  adminEmail?: string | null;
   user: {
     id: string;
     name: string | null;
@@ -51,6 +54,9 @@ interface VendorFormData {
   verified: boolean;
   plan: string;
   rating: number;
+  adminPhone: string;
+  adminWhatsApp: string;
+  adminEmail: string;
   userEmail: string;
   userName: string;
 }
@@ -63,6 +69,9 @@ const initialFormData: VendorFormData = {
   verified: false,
   plan: "FREE",
   rating: 0,
+  adminPhone: "",
+  adminWhatsApp: "",
+  adminEmail: "",
   userEmail: "",
   userName: "",
 };
@@ -142,6 +151,9 @@ export default function AdminVendorsPage() {
       verified: vendor.verified,
       plan: vendor.plan,
       rating: vendor.rating,
+      adminPhone: vendor.adminPhone || "",
+      adminWhatsApp: vendor.adminWhatsApp || "",
+      adminEmail: vendor.adminEmail || "",
       userEmail: vendor.user.email || "",
       userName: vendor.user.name || "",
     });
@@ -163,6 +175,9 @@ export default function AdminVendorsPage() {
             verified: formData.verified,
             plan: formData.plan,
             rating: formData.rating,
+            adminPhone: formData.adminPhone || null,
+            adminWhatsApp: formData.adminWhatsApp || null,
+            adminEmail: formData.adminEmail || null,
           }),
         });
         if (res.ok) {
@@ -417,6 +432,41 @@ export default function AdminVendorsPage() {
                     placeholder="Tell us about this vendor..."
                     className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none min-h-[120px]"
                   />
+                </div>
+                
+                {/* Admin-only contact fields */}
+                <div className="pt-4 border-t border-[#dbb84a]">
+                  <h3 className="text-lg font-bold text-[#3D0C1A] mb-4">Admin-Only Contact Details</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                      <label className="block text-sm font-bold text-[#8a6200] mb-2">Phone Number</label>
+                      <Input 
+                        value={formData.adminPhone}
+                        onChange={(e) => setFormData({...formData, adminPhone: e.target.value})}
+                        placeholder="+1 (555) 123-4567"
+                        className="border-[#dbb84a] focus:ring-[#C9940A]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-[#8a6200] mb-2">WhatsApp</label>
+                      <Input 
+                        value={formData.adminWhatsApp}
+                        onChange={(e) => setFormData({...formData, adminWhatsApp: e.target.value})}
+                        placeholder="+1 (555) 123-4567"
+                        className="border-[#dbb84a] focus:ring-[#C9940A]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-[#8a6200] mb-2">Admin Email</label>
+                      <Input 
+                        type="email"
+                        value={formData.adminEmail}
+                        onChange={(e) => setFormData({...formData, adminEmail: e.target.value})}
+                        placeholder="vendor@example.com"
+                        className="border-[#dbb84a] focus:ring-[#C9940A]"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
               

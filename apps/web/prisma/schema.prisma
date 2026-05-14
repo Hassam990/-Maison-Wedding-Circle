@@ -74,6 +74,10 @@ model VendorProfile {
   plan             String   @default("Free")
   stripeCustomerId String?
   rating           Float    @default(0)
+  // Admin-only contact fields
+  adminPhone       String?
+  adminWhatsApp    String?
+  adminEmail       String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @default(now()) @updatedAt
 
