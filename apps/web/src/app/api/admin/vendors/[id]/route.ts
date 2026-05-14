@@ -61,12 +61,20 @@ export async function DELETE(
   }
 
   try {
-    await db.vendorProfile.delete({
+    const vendor = await db.vendorProfile.findUnique({
       where: { id: params.id },
+      select: { userId: true }
     });
+    
+    if (vendor) {
+      await db.user.delete({
+        where: { id: vendor.userId }
+      });
+    }
     
     return new NextResponse(null, { status: 204 });
   } catch (error) {
+    console.error("Error deleting vendor:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
