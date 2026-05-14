@@ -222,6 +222,7 @@ async function main() {
       update: { passwordHash: vendorHash, role: 'VENDOR' },
       create: { email: v.email, name: v.name, passwordHash: vendorHash, role: 'VENDOR' }
     })
+    // ONLY use original schema fields for now to avoid errors!
     const vendorData: any = {
       businessName: v.business, 
       category: v.category, 
@@ -231,15 +232,6 @@ async function main() {
       rating: v.rating,
       bio: v.bio
     };
-    
-    // Only add new fields if they might exist in the DB
-    if (v.priceRange) vendorData.priceRange = v.priceRange;
-    if (v.servicesOffered) vendorData.servicesOffered = v.servicesOffered;
-    if (v.galleryPhotos) vendorData.galleryPhotos = v.galleryPhotos;
-    if (v.isFeatured !== undefined) vendorData.isFeatured = v.isFeatured;
-    if (v.logoUrl) vendorData.logoUrl = v.logoUrl;
-    if (v.instagramUrl) vendorData.instagramUrl = v.instagramUrl;
-    if (v.websiteUrl) vendorData.websiteUrl = v.websiteUrl;
     
     const profile = await prisma.vendorProfile.upsert({
       where: { userId: user.id },
@@ -267,15 +259,13 @@ async function main() {
       update: { passwordHash: coupleHash, role: 'COUPLE' },
       create: { email: c.email, name: c.name, passwordHash: coupleHash, role: 'COUPLE' }
     })
+    // ONLY use original schema fields for now to avoid errors!
     const coupleData: any = {
       eventType: c.ev, 
       eventDate: c.date, 
       city: c.city, 
       budget: c.budget
     };
-    
-    // Only add new field if it might exist in the DB
-    if (c.tier) coupleData.weddingTier = c.tier;
     
     const cp = await prisma.coupleProfile.upsert({
       where: { userId: user.id },
