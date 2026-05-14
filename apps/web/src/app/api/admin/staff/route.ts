@@ -53,8 +53,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "User already exists" }, { status: 400 });
     }
 
-    const bcrypt = await import("bcrypt");
-    const passwordHash = await bcrypt.hash(password, 10);
+    const bcryptjs = await import("bcryptjs");
+    const passwordHash = await bcryptjs.hash(password, 10);
 
     const user = await db.user.create({
       data: {

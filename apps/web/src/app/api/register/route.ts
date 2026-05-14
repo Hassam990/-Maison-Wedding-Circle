@@ -1,5 +1,5 @@
 export const dynamic = 'force-dynamic';
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
     }
 
     const role = rawRole as Role;
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcryptjs.hash(password, 10);
 
     const user = await db.$transaction(async (tx) => {
       const existingUser = await tx.user.findUnique({

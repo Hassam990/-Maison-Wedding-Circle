@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { PrismaClient, BoostType, AdPlacement } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
-import bcrypt from 'bcrypt'
+import bcryptjs from 'bcryptjs'
 
 // Use the same Prisma 7 adapter pattern as the main app
 const connectionString = process.env.DATABASE_URL
@@ -12,10 +12,10 @@ const prisma = new PrismaClient({ adapter })
 
 async function main() {
   // 1. Hash passwords
-  const adminHash = await bcrypt.hash('Admin@1234', 10)
-  const staffHash = await bcrypt.hash('Staff@1234', 10)
-  const vendorHash = await bcrypt.hash('Vendor@1234', 10)
-  const coupleHash = await bcrypt.hash('Couple@1234', 10)
+  const adminHash = await bcryptjs.hash('Admin@1234', 10)
+  const staffHash = await bcryptjs.hash('Staff@1234', 10)
+  const vendorHash = await bcryptjs.hash('Vendor@1234', 10)
+  const coupleHash = await bcryptjs.hash('Couple@1234', 10)
 
   console.log('Seeding Super Admin and Staff Admins...')
   // 2. Create Super Admin

@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
         const existing = await db.user.findUnique({ where: { email } });
         if (existing) return NextResponse.json({ message: "Email taken" }, { status: 400 });
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcryptjs.hash(password, 10);
         const user = await db.user.create({
             data: {
                 name,

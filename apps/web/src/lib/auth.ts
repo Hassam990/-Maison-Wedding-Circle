@@ -1,7 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import { db } from "@/lib/db";
 
 export const authOptions: NextAuthOptions = {
@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials");
         }
 
-        const isPasswordValid = await bcrypt.compare(credentials.password, user.passwordHash);
+        const isPasswordValid = await bcryptjs.compare(credentials.password, user.passwordHash);
 
         if (!isPasswordValid) {
           throw new Error("Invalid credentials");
