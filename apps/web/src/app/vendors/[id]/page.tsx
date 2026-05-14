@@ -90,23 +90,61 @@ export default async function VendorDetailPage({ params }: { params: { id: strin
             <Link href="/vendors" className="text-sm text-stone-500 hover:text-stone-900 transition-colors">
               ← Back to Directory
             </Link>
-            <h1 className="font-serif text-4xl text-stone-900">{vendor.businessName}</h1>
-            <div className="flex flex-wrap items-center gap-3 text-sm text-stone-600">
-              <span className="rounded-full bg-stone-100 px-3 py-1 text-xs font-medium uppercase tracking-wider text-stone-800">
-                {vendor.category}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="h-1 w-1 rounded-full bg-stone-300" />
-                {vendor.city}
-              </span>
-              {vendor.verified && (
-                <span className="flex items-center gap-1 text-primary">
-                  <span className="text-sm">✓</span> Verified Professional
-                </span>
+            <div className="flex items-center gap-4">
+              {vendor.logoUrl && (
+                <img src={vendor.logoUrl} alt={vendor.businessName} className="w-16 h-16 rounded-full object-cover" />
               )}
+              <div>
+                <h1 className="font-serif text-4xl text-stone-900">{vendor.businessName}</h1>
+                <div className="flex flex-wrap items-center gap-3 text-sm text-stone-600 mt-1">
+                  <span className="rounded-full bg-stone-100 px-3 py-1 text-xs font-medium uppercase tracking-wider text-stone-800">
+                    {vendor.category}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-1 w-1 rounded-full bg-stone-300" />
+                    {vendor.city}
+                  </span>
+                  {vendor.verified && (
+                    <span className="flex items-center gap-1 text-primary">
+                      <span className="text-sm">✓</span> Verified Professional
+                    </span>
+                  )}
+                  {vendor.priceRange && (
+                    <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800">
+                      {vendor.priceRange}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            {vendor.websiteUrl && (
+              <a href={vendor.websiteUrl} target="_blank" rel="noopener noreferrer" className="px-4 py-2 border border-stone-200 rounded-lg text-sm hover:bg-stone-50 transition-colors">
+                Website
+              </a>
+            )}
+            {vendor.instagramUrl && (
+              <a href={vendor.instagramUrl} target="_blank" rel="noopener noreferrer" className="px-4 py-2 border border-stone-200 rounded-lg text-sm hover:bg-stone-50 transition-colors">
+                Instagram
+              </a>
+            )}
+          </div>
         </div>
+
+        {/* Gallery Section */}
+        {vendor.galleryPhotos && vendor.galleryPhotos.length > 0 && (
+          <section className="space-y-4">
+            <h2 className="font-serif text-2xl text-stone-900">Gallery</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {vendor.galleryPhotos.map((photo, index) => (
+                <div key={index} className="relative aspect-square rounded-2xl overflow-hidden">
+                  <img src={photo} alt={`Gallery ${index + 1}`} className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-10">
@@ -116,6 +154,20 @@ export default async function VendorDetailPage({ params }: { params: { id: strin
                 {vendor.bio}
               </div>
             </section>
+
+            {/* Services Offered Section */}
+            {vendor.servicesOffered && vendor.servicesOffered.length > 0 && (
+              <section className="space-y-4 pt-4 border-t border-stone-200">
+                <h2 className="font-serif text-2xl text-stone-900">Services Offered</h2>
+                <div className="flex flex-wrap gap-2">
+                  {vendor.servicesOffered.map((service, index) => (
+                    <span key={index} className="px-4 py-2 rounded-full bg-stone-100 text-stone-700 text-sm font-medium">
+                      {service}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
 
             <section className="space-y-4 pt-4 border-t border-stone-200">
               <div className="flex items-center justify-between">

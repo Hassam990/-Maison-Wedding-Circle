@@ -71,13 +71,25 @@ model VendorProfile {
   city             String?
   bio              String?
   verified         Boolean  @default(false)
-  plan             String   @default("Free")
+  plan             String   @default("FREE") // FREE, PROFESSIONAL, PREMIUM
   stripeCustomerId String?
   rating           Float    @default(0)
   // Admin-only contact fields
   adminPhone       String?
   adminWhatsApp    String?
   adminEmail       String?
+  // New fields from requirements
+  logoUrl          String?
+  instagramUrl     String?
+  websiteUrl       String?
+  priceRange       String? // £, ££, £££, Luxury, or "Starting from £1500"
+  servicesOffered  String[] // e.g., ["Mehndi", "Nikkah", "Walima"]
+  // Gallery fields
+  galleryPhotos    String[] // URLs of photos
+  galleryVideos    String[] // URLs of videos/reels
+  weddingHighlights String[] // URLs of wedding highlight photos/videos
+  // Featured and visibility
+  isFeatured       Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @default(now()) @updatedAt
 
@@ -98,6 +110,8 @@ model CoupleProfile {
   budget     Float?
   style      String?
   guestCount Int?
+  // Silver/Gold/Platinum tier
+  weddingTier String   @default("SILVER") // SILVER, GOLD, PLATINUM
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @default(now()) @updatedAt
 

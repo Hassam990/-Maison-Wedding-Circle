@@ -80,18 +80,139 @@ async function main() {
 
   console.log('Seeding Vendors...')
   const vendors = [
-    { email: 'bushra@vendor.com', name: 'Bushra', business: "Bushra's Kitchen", category: 'Catering', city: 'Atlanta GA', plan: 'PROFESSIONAL', verified: true, rating: 4.8 },
-    { email: 'spiceroute@vendor.com', name: 'Spice Route', business: 'Spice Route Catering', category: 'Catering', city: 'New York NY', plan: 'FREE', verified: false, rating: 4.5 },
-    { email: 'dreamdecor@vendor.com', name: 'Dream Decor', business: 'Dream Decor Atlanta', category: 'Decor', city: 'Atlanta GA', plan: 'PREMIUM', verified: true, rating: 4.9 },
-    { email: 'reverie@vendor.com', name: 'Reverie', business: 'Reverie Floral Design', category: 'Decor', city: 'New York NY', plan: 'PROFESSIONAL', verified: false, rating: 4.7 },
-    { email: 'noor@vendor.com', name: 'Noor Studios', business: 'Noor Studios', category: 'Photography', city: 'Atlanta GA', plan: 'PREMIUM', verified: true, rating: 5.0 },
-    { email: 'maha@vendor.com', name: 'Maha', business: 'Moments by Maha', category: 'Photography', city: 'Dallas TX', plan: 'PROFESSIONAL', verified: false, rating: 4.6 },
-    { email: 'sana@vendor.com', name: 'Sana', business: 'Glam by Sana', category: 'Makeup', city: 'Atlanta GA', plan: 'PROFESSIONAL', verified: true, rating: 4.9 },
-    { email: 'rida@vendor.com', name: 'Rida', business: 'Beauty by Rida', category: 'Makeup', city: 'Houston TX', plan: 'FREE', verified: false, rating: 4.3 },
-    { email: 'encore@vendor.com', name: 'Encore', business: 'Encore Entertainment', category: 'Entertainment', city: 'Atlanta GA', plan: 'PREMIUM', verified: true, rating: 4.8 },
-    { email: 'desibeats@vendor.com', name: 'Desi Beats', business: 'Desi Beats DJ', category: 'Entertainment', city: 'New Jersey NJ', plan: 'PROFESSIONAL', verified: false, rating: 4.6 },
-    { email: 'grandmahal@vendor.com', name: 'Grand Mahal', business: 'The Grand Mahal', category: 'Venue', city: 'Atlanta GA', plan: 'PREMIUM', verified: true, rating: 4.9 },
-    { email: 'taj@vendor.com', name: 'Taj', business: 'Taj Banquet Hall', category: 'Venue', city: 'Chicago IL', plan: 'PROFESSIONAL', verified: false, rating: 4.7 },
+    { 
+      email: 'bushra@vendor.com', name: 'Bushra', business: "Bushra's Kitchen", category: 'Catering', city: 'Atlanta GA', plan: 'PROFESSIONAL', verified: true, rating: 4.8,
+      bio: "Authentic Pakistani and Indian catering, specializing in traditional wedding feasts and modern fusion menus.",
+      priceRange: "££",
+      servicesOffered: ["Mehndi", "Nikkah", "Walima"],
+      galleryPhotos: [
+        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800",
+        "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=800"
+      ],
+      isFeatured: true,
+      logoUrl: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=200"
+    },
+    { 
+      email: 'spiceroute@vendor.com', name: 'Spice Route', business: 'Spice Route Catering', category: 'Catering', city: 'New York NY', plan: 'FREE', verified: false, rating: 4.5,
+      bio: "Luxury South Asian wedding services tailored to your unique vision and tradition.",
+      priceRange: "£",
+      servicesOffered: ["Mehndi", "Walima"],
+      galleryPhotos: [
+        "https://images.unsplash.com/photo-1555244162-803834f70033?w=800"
+      ],
+      isFeatured: false
+    },
+    { 
+      email: 'dreamdecor@vendor.com', name: 'Dream Decor', business: 'Dream Decor Atlanta', category: 'Decor', city: 'Atlanta GA', plan: 'PREMIUM', verified: true, rating: 4.9,
+      bio: "Transforming venues into magical spaces with traditional South Asian florals and modern decor.",
+      priceRange: "£££",
+      servicesOffered: ["Mehndi", "Nikkah", "Walima", "Destination weddings"],
+      galleryPhotos: [
+        "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800",
+        "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800"
+      ],
+      isFeatured: true,
+      logoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200"
+    },
+    { 
+      email: 'reverie@vendor.com', name: 'Reverie', business: 'Reverie Floral Design', category: 'Decor', city: 'New York NY', plan: 'PROFESSIONAL', verified: false, rating: 4.7,
+      bio: "Elegant floral designs for every wedding event, from intimate mehndi to grand walima.",
+      priceRange: "££",
+      servicesOffered: ["Mehndi", "Nikkah"],
+      galleryPhotos: [
+        "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=800"
+      ],
+      isFeatured: false
+    },
+    { 
+      email: 'noor@vendor.com', name: 'Noor Studios', business: 'Noor Studios', category: 'Photography', city: 'Atlanta GA', plan: 'PREMIUM', verified: true, rating: 5.0,
+      bio: "Luxury Pakistani wedding photography team capturing timeless celebrations across Atlanta and beyond.",
+      priceRange: "Luxury",
+      servicesOffered: ["Mehndi", "Nikkah", "Walima", "Bridal shoots"],
+      galleryPhotos: [
+        "https://images.unsplash.com/photo-1519741497674-611481863552?w=800",
+        "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800"
+      ],
+      isFeatured: true,
+      instagramUrl: "https://instagram.com/noorstudios",
+      logoUrl: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=200"
+    },
+    { 
+      email: 'maha@vendor.com', name: 'Maha', business: 'Moments by Maha', category: 'Photography', city: 'Dallas TX', plan: 'PROFESSIONAL', verified: false, rating: 4.6,
+      bio: "Candid and traditional wedding photography for South Asian couples.",
+      priceRange: "££",
+      servicesOffered: ["Nikkah", "Walima"],
+      galleryPhotos: [
+        "https://images.unsplash.com/photo-1526045612212-70caf35c14df?w=800"
+      ],
+      isFeatured: false
+    },
+    { 
+      email: 'sana@vendor.com', name: 'Sana', business: 'Glam by Sana', category: 'Makeup', city: 'Atlanta GA', plan: 'PROFESSIONAL', verified: true, rating: 4.9,
+      bio: "Expert bridal makeup and hair styling for traditional and modern South Asian brides.",
+      priceRange: "££",
+      servicesOffered: ["Mehndi", "Nikkah", "Walima", "Bridal shoots"],
+      galleryPhotos: [
+        "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=800",
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800"
+      ],
+      isFeatured: true,
+      logoUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200"
+    },
+    { 
+      email: 'rida@vendor.com', name: 'Rida', business: 'Beauty by Rida', category: 'Makeup', city: 'Houston TX', plan: 'FREE', verified: false, rating: 4.3,
+      bio: "Bridal hair and makeup artistry for South Asian weddings.",
+      priceRange: "£",
+      servicesOffered: ["Nikkah", "Walima"],
+      galleryPhotos: [
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800"
+      ],
+      isFeatured: false
+    },
+    { 
+      email: 'encore@vendor.com', name: 'Encore', business: 'Encore Entertainment', category: 'Entertainment', city: 'Atlanta GA', plan: 'PREMIUM', verified: true, rating: 4.8,
+      bio: "Premium DJs, dhol players, and live entertainment for unforgettable weddings.",
+      priceRange: "£££",
+      servicesOffered: ["Mehndi", "Nikkah", "Walima", "Destination weddings"],
+      galleryPhotos: [
+        "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800",
+        "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800"
+      ],
+      isFeatured: true
+    },
+    { 
+      email: 'desibeats@vendor.com', name: 'Desi Beats', business: 'Desi Beats DJ', category: 'Entertainment', city: 'New Jersey NJ', plan: 'PROFESSIONAL', verified: false, rating: 4.6,
+      bio: "DJ services specializing in Bollywood, Bhangra, and Top 40 remixes.",
+      priceRange: "££",
+      servicesOffered: ["Mehndi", "Walima"],
+      galleryPhotos: [
+        "https://images.unsplash.com/photo-1558346490-a72e53ae2e4e?w=800"
+      ],
+      isFeatured: false
+    },
+    { 
+      email: 'grandmahal@vendor.com', name: 'Grand Mahal', business: 'The Grand Mahal', category: 'Venue', city: 'Atlanta GA', plan: 'PREMIUM', verified: true, rating: 4.9,
+      bio: "Luxury banquet hall and hotel for grand South Asian wedding celebrations.",
+      priceRange: "Luxury",
+      servicesOffered: ["Mehndi", "Nikkah", "Walima", "Destination weddings"],
+      galleryPhotos: [
+        "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800",
+        "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800"
+      ],
+      isFeatured: true,
+      websiteUrl: "https://thegrandmahal.com",
+      logoUrl: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=200"
+    },
+    { 
+      email: 'taj@vendor.com', name: 'Taj', business: 'Taj Banquet Hall', category: 'Venue', city: 'Chicago IL', plan: 'PROFESSIONAL', verified: false, rating: 4.7,
+      bio: "Elegant banquet hall for South Asian weddings and events.",
+      priceRange: "££",
+      servicesOffered: ["Nikkah", "Walima"],
+      galleryPhotos: [
+        "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800"
+      ],
+      isFeatured: false
+    },
   ]
 
   const vendorProfilesList: any[] = []
@@ -103,20 +224,51 @@ async function main() {
     })
     const profile = await prisma.vendorProfile.upsert({
       where: { userId: user.id },
-      update: { businessName: v.business, category: v.category, city: v.city, plan: v.plan, verified: v.verified, rating: v.rating },
-      create: { userId: user.id, businessName: v.business, category: v.category, city: v.city, plan: v.plan, verified: v.verified, rating: v.rating }
+      update: { 
+        businessName: v.business, 
+        category: v.category, 
+        city: v.city, 
+        plan: v.plan, 
+        verified: v.verified, 
+        rating: v.rating,
+        bio: v.bio,
+        priceRange: v.priceRange,
+        servicesOffered: v.servicesOffered,
+        galleryPhotos: v.galleryPhotos,
+        isFeatured: v.isFeatured,
+        logoUrl: v.logoUrl,
+        instagramUrl: v.instagramUrl,
+        websiteUrl: v.websiteUrl
+      },
+      create: { 
+        userId: user.id, 
+        businessName: v.business, 
+        category: v.category, 
+        city: v.city, 
+        plan: v.plan, 
+        verified: v.verified, 
+        rating: v.rating,
+        bio: v.bio,
+        priceRange: v.priceRange,
+        servicesOffered: v.servicesOffered,
+        galleryPhotos: v.galleryPhotos,
+        isFeatured: v.isFeatured,
+        logoUrl: v.logoUrl,
+        instagramUrl: v.instagramUrl,
+        websiteUrl: v.websiteUrl
+      }
     })
     vendorProfilesList.push(profile)
   }
 
   console.log('Seeding Couples...')
   const couples = [
-    { email: 'ali@couple.com', name: 'Ali & Sara Malik', ev: 'Wedding', date: new Date('2025-06-15'), city: 'Atlanta GA', budget: 45000, status: 'COMPLETED' },
-    { email: 'omar@couple.com', name: 'Omar & Fatima Qureshi', ev: 'Wedding + Mehndi', date: new Date('2025-08-20'), city: 'New York NY', budget: 65000, status: 'CONFIRMED' },
-    { email: 'hassan@couple.com', name: 'Hassan & Amna Baig', ev: 'Wedding', date: new Date('2025-10-10'), city: 'Dallas TX', budget: 35000, status: 'PLANNING' },
-    { email: 'tariq@couple.com', name: 'Tariq & Zainab Shah', ev: 'Wedding', date: new Date('2025-12-05'), city: 'Houston TX', budget: 55000, status: 'MATCHED' },
-    { email: 'kamran@couple.com', name: 'Kamran & Nadia Ahmed', ev: 'Reception', date: new Date('2026-03-01'), city: 'Chicago IL', budget: 25000, status: 'INTAKE' },
-    { email: 'saad@couple.com', name: 'Saad & Hira Chaudhry', ev: 'Wedding', date: new Date('2026-04-12'), city: 'Atlanta GA', budget: 75000, status: 'COMPLETED' },
+    { email: 'ali@couple.com', name: 'Ali & Sara Malik', ev: 'Wedding', date: new Date('2025-06-15'), city: 'Atlanta GA', budget: 45000, status: 'COMPLETED', tier: 'GOLD' },
+    { email: 'omar@couple.com', name: 'Omar & Fatima Qureshi', ev: 'Wedding + Mehndi', date: new Date('2025-08-20'), city: 'New York NY', budget: 65000, status: 'CONFIRMED', tier: 'PLATINUM' },
+    { email: 'hassan@couple.com', name: 'Hassan & Amna Baig', ev: 'Wedding', date: new Date('2025-10-10'), city: 'Dallas TX', budget: 35000, status: 'PLANNING', tier: 'SILVER' },
+    { email: 'tariq@couple.com', name: 'Tariq & Zainab Shah', ev: 'Wedding', date: new Date('2025-12-05'), city: 'Houston TX', budget: 55000, status: 'MATCHED', tier: 'GOLD' },
+    { email: 'kamran@couple.com', name: 'Kamran & Nadia Ahmed', ev: 'Reception', date: new Date('2026-03-01'), city: 'Chicago IL', budget: 25000, status: 'INTAKE', tier: 'SILVER' },
+    { email: 'saad@couple.com', name: 'Saad & Hira Chaudhry', ev: 'Wedding', date: new Date('2026-04-12'), city: 'Atlanta GA', budget: 75000, status: 'COMPLETED', tier: 'PLATINUM' },
   ]
   for (const c of couples) {
     const user = await prisma.user.upsert({
@@ -126,8 +278,8 @@ async function main() {
     })
     const cp = await prisma.coupleProfile.upsert({
       where: { userId: user.id },
-      update: { eventType: c.ev, eventDate: c.date, city: c.city, budget: c.budget },
-      create: { userId: user.id, eventType: c.ev, eventDate: c.date, city: c.city, budget: c.budget }
+      update: { eventType: c.ev, eventDate: c.date, city: c.city, budget: c.budget, weddingTier: c.tier },
+      create: { userId: user.id, eventType: c.ev, eventDate: c.date, city: c.city, budget: c.budget, weddingTier: c.tier }
     })
     
     // Add initial consultation record
