@@ -28,10 +28,10 @@ import { toast } from "sonner";
 
 interface Vendor {
   id: string;
-  businessName: string;
-  category: string;
-  city: string;
-  bio: string;
+  businessName: string | null;
+  category: string | null;
+  city: string | null;
+  bio: string | null;
   verified: boolean;
   plan: string;
   rating: number;
@@ -90,15 +90,19 @@ export default function AdminVendorsPage() {
 
   const fetchVendors = async () => {
     try {
+      console.log("Fetching vendors...");
       const res = await fetch("/api/admin/vendors");
       if (res.ok) {
         const data = await res.json();
+        console.log("Vendors loaded successfully:", data);
         setVendors(data);
       } else {
-        toast.error("Failed to load vendors");
+        console.error("Failed to load vendors, status:", res.status);
+        toast.error(`Failed to load vendors: ${res.statusText}`);
       }
     } catch (error) {
-      toast.error("Could not load vendors");
+      console.error("Error fetching vendors:", error);
+      toast.error(`Could not load vendors: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
@@ -195,8 +199,8 @@ export default function AdminVendorsPage() {
   };
 
   const filtered = vendors.filter(v => 
-    v.businessName.toLowerCase().includes(search.toLowerCase()) ||
-    v.user.email?.toLowerCase().includes(search.toLowerCase())
+    (v.businessName || "").toLowerCase().includes(search.toLowerCase()) ||
+    (v.user.email || "").toLowerCase().includes(search.toLowerCase())
   );
 
   if (loading) {
@@ -251,14 +255,14 @@ export default function AdminVendorsPage() {
                       <td className="px-6 py-4">
                          <div className="flex items-center gap-3">
                             <div className="w-12 h-12 rounded-2xl bg-[#fef3d6] flex items-center justify-center text-[#C9940A] font-bold text-lg">
-                               {vendor.businessName[0]}
+                               {(vendor.businessName || "V")[0]}
                             </div>
                             <div>
                                <div className="flex items-center gap-1.5">
-                                  <p className="text-sm font-bold text-[#3D0C1A]">{vendor.businessName}</p>
+                                  <p className="text-sm font-bold text-[#3D0C1A]">{vendor.businessName || "Unnamed Vendor"}</p>
                                   {vendor.verified && <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 fill-emerald-50" />}
                                </div>
-                               <p className="text-[11px] text-[#8a6200]">{vendor.category} · {vendor.city}</p>
+                               <p className="text-[11px] text-[#8a6200]">{(vendor.category || "Uncategorized")} · {(vendor.city || "Unknown Location")}</p>
                             </div>
                          </div>
                       </td>
