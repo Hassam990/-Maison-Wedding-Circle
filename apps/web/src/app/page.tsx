@@ -10,7 +10,12 @@ import ConsultationForm from "@/components/forms/ConsultationForm";
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const content = await getSiteContent("homepage");
+  let content: any = {};
+  try {
+    content = await getSiteContent("homepage");
+  } catch (error) {
+    console.error("CMS Load Error:", error);
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
