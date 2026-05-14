@@ -13,6 +13,7 @@ import {
   Shield,
   BarChart,
   LogOut,
+  ArrowLeft,
 } from "lucide-react";
 import { Toaster } from "sonner";
 
@@ -67,6 +68,17 @@ export default async function AdminLayout({
 
         <nav className="flex-1 overflow-y-auto py-4">
           <ul className="space-y-1 px-3">
+            {/* Back to Website Link */}
+            <li>
+              <Link
+                href="/"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#fde9b2] hover:bg-[#5a1428] hover:text-white transition-colors group mb-4"
+              >
+                <ArrowLeft className="w-5 h-5 text-[#C9940A] group-hover:text-white transition-colors" />
+                Back to Website
+              </Link>
+            </li>
+            
             {adminNavItems.map((item) => {
               const Icon = item.icon;
               return (
