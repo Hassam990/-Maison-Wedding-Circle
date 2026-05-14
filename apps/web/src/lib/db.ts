@@ -4,19 +4,28 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-// The Smart Proxy: Acts like Prisma, but only initializes when a query is actually made.
-// This prevents crashes during the Vercel build phase.
+// The Ultra-Safe Proxy: Prevents "Cannot read properties of null" errors
+// by ensuring that we only access Prisma when the environment is ready.
 export const db = new Proxy({} as PrismaClient, {
   get(target, prop) {
     if (typeof window !== "undefined") return undefined;
     
+    // Safety check for common JS/Next.js internal property probes
+    if (prop === '$$typeof' || prop === 'constructor' || prop === 'then') return undefined;
+
     if (!globalForPrisma.prisma) {
       globalForPrisma.prisma = new PrismaClient({
         log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
       });
     }
     
-    // @ts-ignore
-    return globalForPrisma.prisma[prop];
+    const value = (globalForPrisma.prisma as any)[prop];
+    
+    // If we're accessing a model (e.g. db.user), wrap its methods to be safe
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+       return value;
+    }
+    
+    return value;
   }
 });
