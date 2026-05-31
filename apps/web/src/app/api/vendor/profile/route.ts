@@ -39,6 +39,15 @@ export async function GET() {
         userId: true,
         createdAt: true,
         updatedAt: true,
+        logoUrl: true,
+        instagramUrl: true,
+        websiteUrl: true,
+        priceRange: true,
+        servicesOffered: true,
+        galleryPhotos: true,
+        galleryVideos: true,
+        weddingHighlights: true,
+        isFeatured: true,
       },
     });
 
@@ -70,6 +79,14 @@ export async function PUT(request: Request) {
     category?: string;
     city?: string;
     bio?: string | null;
+    logoUrl?: string | null;
+    instagramUrl?: string | null;
+    websiteUrl?: string | null;
+    priceRange?: string | null;
+    servicesOffered?: string[];
+    galleryPhotos?: string[];
+    galleryVideos?: string[];
+    weddingHighlights?: string[];
   };
 
   try {
@@ -82,6 +99,14 @@ export async function PUT(request: Request) {
   const category = body.category?.trim() || "";
   const city = body.city?.trim() || "";
   const bio = typeof body.bio === "string" ? body.bio.trim() : null;
+  const logoUrl = typeof body.logoUrl === "string" ? (body.logoUrl.trim() || null) : null;
+  const instagramUrl = typeof body.instagramUrl === "string" ? (body.instagramUrl.trim() || null) : null;
+  const websiteUrl = typeof body.websiteUrl === "string" ? (body.websiteUrl.trim() || null) : null;
+  const priceRange = typeof body.priceRange === "string" ? (body.priceRange.trim() || null) : null;
+  const servicesOffered = Array.isArray(body.servicesOffered) ? body.servicesOffered : [];
+  const galleryPhotos = Array.isArray(body.galleryPhotos) ? body.galleryPhotos : [];
+  const galleryVideos = Array.isArray(body.galleryVideos) ? body.galleryVideos : [];
+  const weddingHighlights = Array.isArray(body.weddingHighlights) ? body.weddingHighlights : [];
 
   if (!businessName || !category || !city) {
     return NextResponse.json(
@@ -113,6 +138,14 @@ export async function PUT(request: Request) {
         category,
         city,
         bio,
+        logoUrl,
+        instagramUrl,
+        websiteUrl,
+        priceRange,
+        servicesOffered,
+        galleryPhotos,
+        galleryVideos,
+        weddingHighlights,
       },
       select: {
         id: true,
@@ -126,6 +159,15 @@ export async function PUT(request: Request) {
         userId: true,
         createdAt: true,
         updatedAt: true,
+        logoUrl: true,
+        instagramUrl: true,
+        websiteUrl: true,
+        priceRange: true,
+        servicesOffered: true,
+        galleryPhotos: true,
+        galleryVideos: true,
+        weddingHighlights: true,
+        isFeatured: true,
       },
     });
 

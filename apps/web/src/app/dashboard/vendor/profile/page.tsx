@@ -17,6 +17,15 @@ type VendorProfileResponse = {
   verified?: boolean | null;
   plan?: string | null;
   rating?: number | string | null;
+  logoUrl?: string | null;
+  instagramUrl?: string | null;
+  websiteUrl?: string | null;
+  priceRange?: string | null;
+  servicesOffered?: string[];
+  galleryPhotos?: string[];
+  galleryVideos?: string[];
+  weddingHighlights?: string[];
+  isFeatured?: boolean;
 };
 
 type FormState = {
@@ -24,6 +33,14 @@ type FormState = {
   category: string;
   city: string;
   bio: string;
+  logoUrl: string;
+  instagramUrl: string;
+  websiteUrl: string;
+  priceRange: string;
+  servicesOffered: string;
+  galleryPhotos: string;
+  galleryVideos: string;
+  weddingHighlights: string;
 };
 
 const initialForm: FormState = {
@@ -31,6 +48,14 @@ const initialForm: FormState = {
   category: "",
   city: "",
   bio: "",
+  logoUrl: "",
+  instagramUrl: "",
+  websiteUrl: "",
+  priceRange: "",
+  servicesOffered: "",
+  galleryPhotos: "",
+  galleryVideos: "",
+  weddingHighlights: "",
 };
 
 export default function VendorProfilePage() {
@@ -77,6 +102,14 @@ export default function VendorProfilePage() {
           category: profile.category || "",
           city: profile.city || "",
           bio: profile.bio || "",
+          logoUrl: profile.logoUrl || "",
+          instagramUrl: profile.instagramUrl || "",
+          websiteUrl: profile.websiteUrl || "",
+          priceRange: profile.priceRange || "",
+          servicesOffered: profile.servicesOffered ? profile.servicesOffered.join(", ") : "",
+          galleryPhotos: profile.galleryPhotos ? profile.galleryPhotos.join(", ") : "",
+          galleryVideos: profile.galleryVideos ? profile.galleryVideos.join(", ") : "",
+          weddingHighlights: profile.weddingHighlights ? profile.weddingHighlights.join(", ") : "",
         });
         setProfileMeta({
           verified: profile.verified,
@@ -121,6 +154,14 @@ export default function VendorProfilePage() {
           category: form.category.trim(),
           city: form.city.trim(),
           bio: form.bio.trim(),
+          logoUrl: form.logoUrl.trim() || null,
+          instagramUrl: form.instagramUrl.trim() || null,
+          websiteUrl: form.websiteUrl.trim() || null,
+          priceRange: form.priceRange.trim() || null,
+          servicesOffered: form.servicesOffered.split(",").map(s => s.trim()).filter(Boolean),
+          galleryPhotos: form.galleryPhotos.split(",").map(s => s.trim()).filter(Boolean),
+          galleryVideos: form.galleryVideos.split(",").map(s => s.trim()).filter(Boolean),
+          weddingHighlights: form.weddingHighlights.split(",").map(s => s.trim()).filter(Boolean),
         }),
       });
 
@@ -137,6 +178,14 @@ export default function VendorProfilePage() {
         category: profile.category || "",
         city: profile.city || "",
         bio: profile.bio || "",
+        logoUrl: profile.logoUrl || "",
+        instagramUrl: profile.instagramUrl || "",
+        websiteUrl: profile.websiteUrl || "",
+        priceRange: profile.priceRange || "",
+        servicesOffered: profile.servicesOffered ? profile.servicesOffered.join(", ") : "",
+        galleryPhotos: profile.galleryPhotos ? profile.galleryPhotos.join(", ") : "",
+        galleryVideos: profile.galleryVideos ? profile.galleryVideos.join(", ") : "",
+        weddingHighlights: profile.weddingHighlights ? profile.weddingHighlights.join(", ") : "",
       });
       setProfileMeta({
         verified: profile.verified,
@@ -232,83 +281,207 @@ export default function VendorProfilePage() {
             </div>
           ) : (
             <form className="space-y-6" onSubmit={handleSubmit}>
-              <div className="grid gap-5 md:grid-cols-2">
+              <div className="space-y-8">
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-stone-700" htmlFor="businessName">
+                      Business name
+                    </label>
+                    <Input
+                      id="businessName"
+                      value={form.businessName}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, businessName: event.target.value }))
+                      }
+                      placeholder="Maison Floral Studio"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-stone-700" htmlFor="category">
+                      Category
+                    </label>
+                    <Input
+                      id="category"
+                      value={form.category}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, category: event.target.value }))
+                      }
+                      placeholder="Florist"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-stone-700" htmlFor="city">
+                      City
+                    </label>
+                    <Input
+                      id="city"
+                      value={form.city}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, city: event.target.value }))
+                      }
+                      placeholder="Lahore"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-stone-700" htmlFor="priceRange">
+                      Price Range
+                    </label>
+                    <Input
+                      id="priceRange"
+                      value={form.priceRange}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, priceRange: event.target.value }))
+                      }
+                      placeholder="£, ££, £££, Luxury"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-stone-700" htmlFor="logoUrl">
+                      Logo URL
+                    </label>
+                    <Input
+                      id="logoUrl"
+                      value={form.logoUrl}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, logoUrl: event.target.value }))
+                      }
+                      placeholder="https://..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-stone-700" htmlFor="websiteUrl">
+                      Website URL
+                    </label>
+                    <Input
+                      id="websiteUrl"
+                      value={form.websiteUrl}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, websiteUrl: event.target.value }))
+                      }
+                      placeholder="https://..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-stone-700" htmlFor="instagramUrl">
+                      Instagram URL
+                    </label>
+                    <Input
+                      id="instagramUrl"
+                      value={form.instagramUrl}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, instagramUrl: event.target.value }))
+                      }
+                      placeholder="https://..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-stone-700" htmlFor="servicesOffered">
+                      Services Offered (comma separated)
+                    </label>
+                    <Input
+                      id="servicesOffered"
+                      value={form.servicesOffered}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, servicesOffered: event.target.value }))
+                      }
+                      placeholder="Mehndi, Nikkah, Walima"
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-stone-700" htmlFor="businessName">
-                    Business name
+                  <label className="text-sm font-medium text-stone-700" htmlFor="logoUrl">
+                    Logo Preview
                   </label>
-                  <Input
-                    id="businessName"
-                    value={form.businessName}
+                  {form.logoUrl && (
+                    <div className="h-24 w-24 rounded-full border border-stone-200 overflow-hidden">
+                      <img src={form.logoUrl} alt="Logo Preview" className="h-full w-full object-cover" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-stone-700" htmlFor="bio">
+                    Bio
+                  </label>
+                  <textarea
+                    id="bio"
+                    value={form.bio}
                     onChange={(event) =>
-                      setForm((current) => ({ ...current, businessName: event.target.value }))
+                      setForm((current) => ({ ...current, bio: event.target.value }))
                     }
-                    placeholder="Maison Floral Studio"
-                    required
+                    placeholder="Tell couples what makes your service special, your aesthetic, and how you work."
+                    rows={6}
+                    className="flex min-h-[140px] w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-stone-700" htmlFor="category">
-                    Category
+                  <label className="text-sm font-medium text-stone-700" htmlFor="galleryPhotos">
+                    Gallery Photos (comma separated URLs)
                   </label>
-                  <Input
-                    id="category"
-                    value={form.category}
+                  <textarea
+                    id="galleryPhotos"
+                    value={form.galleryPhotos}
                     onChange={(event) =>
-                      setForm((current) => ({ ...current, category: event.target.value }))
+                      setForm((current) => ({ ...current, galleryPhotos: event.target.value }))
                     }
-                    placeholder="Florist"
-                    required
+                    placeholder="https://..., https://..."
+                    rows={3}
+                    className="flex w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
                   />
+                  {form.galleryPhotos && (
+                    <div className="grid grid-cols-3 gap-2 mt-2">
+                      {form.galleryPhotos.split(",").map((url, i) => (
+                        <div key={i} className="aspect-square rounded-xl overflow-hidden border border-stone-200">
+                          <img src={url.trim()} alt={`Gallery ${i+1}`} className="h-full w-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-stone-700" htmlFor="city">
-                    City
+                  <label className="text-sm font-medium text-stone-700" htmlFor="weddingHighlights">
+                    Wedding Highlights (comma separated URLs)
                   </label>
-                  <Input
-                    id="city"
-                    value={form.city}
+                  <textarea
+                    id="weddingHighlights"
+                    value={form.weddingHighlights}
                     onChange={(event) =>
-                      setForm((current) => ({ ...current, city: event.target.value }))
+                      setForm((current) => ({ ...current, weddingHighlights: event.target.value }))
                     }
-                    placeholder="Lahore"
-                    required
+                    placeholder="https://..., https://..."
+                    rows={3}
+                    className="flex w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-stone-700" htmlFor="status">
-                    Listing readiness
+                  <label className="text-sm font-medium text-stone-700" htmlFor="galleryVideos">
+                    Gallery Videos (comma separated URLs)
                   </label>
-                  <Input
-                    id="status"
-                    value={
-                      form.businessName && form.category && form.city
-                        ? "Ready for marketplace visibility"
-                        : "Complete required fields"
+                  <textarea
+                    id="galleryVideos"
+                    value={form.galleryVideos}
+                    onChange={(event) =>
+                      setForm((current) => ({ ...current, galleryVideos: event.target.value }))
                     }
-                    readOnly
+                    placeholder="https://..., https://..."
+                    rows={3}
+                    className="flex w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
                   />
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-stone-700" htmlFor="bio">
-                  Bio
-                </label>
-                <textarea
-                  id="bio"
-                  value={form.bio}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, bio: event.target.value }))
-                  }
-                  placeholder="Tell couples what makes your service special, your aesthetic, and how you work."
-                  rows={6}
-                  className="flex min-h-[140px] w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
-                />
-              </div>
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Button type="submit" disabled={saving}>

@@ -39,6 +39,15 @@ interface Vendor {
   adminPhone?: string | null;
   adminWhatsApp?: string | null;
   adminEmail?: string | null;
+  logoUrl?: string | null;
+  instagramUrl?: string | null;
+  websiteUrl?: string | null;
+  priceRange?: string | null;
+  servicesOffered?: string[];
+  galleryPhotos?: string[];
+  galleryVideos?: string[];
+  weddingHighlights?: string[];
+  isFeatured?: boolean;
   user: {
     id: string;
     name: string | null;
@@ -59,6 +68,15 @@ interface VendorFormData {
   adminEmail: string;
   userEmail: string;
   userName: string;
+  logoUrl: string;
+  instagramUrl: string;
+  websiteUrl: string;
+  priceRange: string;
+  servicesOffered: string;
+  galleryPhotos: string;
+  galleryVideos: string;
+  weddingHighlights: string;
+  isFeatured: boolean;
 }
 
 const initialFormData: VendorFormData = {
@@ -74,6 +92,15 @@ const initialFormData: VendorFormData = {
   adminEmail: "",
   userEmail: "",
   userName: "",
+  logoUrl: "",
+  instagramUrl: "",
+  websiteUrl: "",
+  priceRange: "",
+  servicesOffered: "",
+  galleryPhotos: "",
+  galleryVideos: "",
+  weddingHighlights: "",
+  isFeatured: false,
 };
 
 export default function AdminVendorsPage() {
@@ -160,6 +187,15 @@ export default function AdminVendorsPage() {
       adminEmail: vendor.adminEmail || "",
       userEmail: vendor.user.email || "",
       userName: vendor.user.name || "",
+      logoUrl: vendor.logoUrl || "",
+      instagramUrl: vendor.instagramUrl || "",
+      websiteUrl: vendor.websiteUrl || "",
+      priceRange: vendor.priceRange || "",
+      servicesOffered: vendor.servicesOffered ? vendor.servicesOffered.join(", ") : "",
+      galleryPhotos: vendor.galleryPhotos ? vendor.galleryPhotos.join(", ") : "",
+      galleryVideos: vendor.galleryVideos ? vendor.galleryVideos.join(", ") : "",
+      weddingHighlights: vendor.weddingHighlights ? vendor.weddingHighlights.join(", ") : "",
+      isFeatured: vendor.isFeatured || false,
     });
     setIsModalOpen(true);
   };
@@ -167,22 +203,33 @@ export default function AdminVendorsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = {
+        businessName: formData.businessName,
+        category: formData.category,
+        city: formData.city,
+        bio: formData.bio,
+        verified: formData.verified,
+        plan: formData.plan,
+        rating: formData.rating,
+        adminPhone: formData.adminPhone || null,
+        adminWhatsApp: formData.adminWhatsApp || null,
+        adminEmail: formData.adminEmail || null,
+        logoUrl: formData.logoUrl || null,
+        instagramUrl: formData.instagramUrl || null,
+        websiteUrl: formData.websiteUrl || null,
+        priceRange: formData.priceRange || null,
+        servicesOffered: formData.servicesOffered.split(",").map(s => s.trim()).filter(Boolean),
+        galleryPhotos: formData.galleryPhotos.split(",").map(s => s.trim()).filter(Boolean),
+        galleryVideos: formData.galleryVideos.split(",").map(s => s.trim()).filter(Boolean),
+        weddingHighlights: formData.weddingHighlights.split(",").map(s => s.trim()).filter(Boolean),
+        isFeatured: formData.isFeatured,
+      };
+
       if (editingVendor) {
         const res = await fetch(`/api/admin/vendors/${editingVendor.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            businessName: formData.businessName,
-            category: formData.category,
-            city: formData.city,
-            bio: formData.bio,
-            verified: formData.verified,
-            plan: formData.plan,
-            rating: formData.rating,
-            adminPhone: formData.adminPhone || null,
-            adminWhatsApp: formData.adminWhatsApp || null,
-            adminEmail: formData.adminEmail || null,
-          }),
+          body: JSON.stringify(payload),
         });
         if (res.ok) {
           const updatedVendor = await res.json();
@@ -193,7 +240,7 @@ export default function AdminVendorsPage() {
         const res = await fetch("/api/admin/vendors", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({ ...payload, userEmail: formData.userEmail, userName: formData.userName }),
         });
         if (res.ok) {
           const newVendor = await res.json();
@@ -473,6 +520,98 @@ export default function AdminVendorsPage() {
                     placeholder="Tell us about this vendor..."
                     className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none min-h-[100px] sm:min-h-[120px]"
                   />
+                </div>
+
+                {/* Media & Additional Info */}
+                <div className="pt-4 border-t border-[#dbb84a]">
+                  <h3 className="text-lg font-bold text-[#3D0C1A] mb-4">Media & Additional Information</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    <div>
+                      <label className="block text-sm font-bold text-[#8a6200] mb-2">Logo URL</label>
+                      <Input 
+                        value={formData.logoUrl}
+                        onChange={(e) => setFormData({...formData, logoUrl: e.target.value})}
+                        placeholder="https://..."
+                        className="border-[#dbb84a] focus:ring-[#C9940A]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-[#8a6200] mb-2">Website URL</label>
+                      <Input 
+                        value={formData.websiteUrl}
+                        onChange={(e) => setFormData({...formData, websiteUrl: e.target.value})}
+                        placeholder="https://..."
+                        className="border-[#dbb84a] focus:ring-[#C9940A]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-[#8a6200] mb-2">Instagram URL</label>
+                      <Input 
+                        value={formData.instagramUrl}
+                        onChange={(e) => setFormData({...formData, instagramUrl: e.target.value})}
+                        placeholder="https://..."
+                        className="border-[#dbb84a] focus:ring-[#C9940A]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-[#8a6200] mb-2">Price Range</label>
+                      <Input 
+                        value={formData.priceRange}
+                        onChange={(e) => setFormData({...formData, priceRange: e.target.value})}
+                        placeholder="£, ££, £££, Luxury"
+                        className="border-[#dbb84a] focus:ring-[#C9940A]"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <label className="block text-sm font-bold text-[#8a6200] mb-2">Services Offered (comma separated)</label>
+                    <Input 
+                      value={formData.servicesOffered}
+                      onChange={(e) => setFormData({...formData, servicesOffered: e.target.value})}
+                      placeholder="Mehndi, Nikkah, Walima"
+                      className="border-[#dbb84a] focus:ring-[#C9940A]"
+                    />
+                  </div>
+                  <div className="mt-4">
+                    <label className="block text-sm font-bold text-[#8a6200] mb-2">Gallery Photos (comma separated URLs)</label>
+                    <textarea
+                      value={formData.galleryPhotos}
+                      onChange={(e) => setFormData({...formData, galleryPhotos: e.target.value})}
+                      placeholder="https://..., https://..."
+                      rows={2}
+                      className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none"
+                    />
+                  </div>
+                  <div className="mt-4">
+                    <label className="block text-sm font-bold text-[#8a6200] mb-2">Wedding Highlights (comma separated URLs)</label>
+                    <textarea
+                      value={formData.weddingHighlights}
+                      onChange={(e) => setFormData({...formData, weddingHighlights: e.target.value})}
+                      placeholder="https://..., https://..."
+                      rows={2}
+                      className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none"
+                    />
+                  </div>
+                  <div className="mt-4">
+                    <label className="block text-sm font-bold text-[#8a6200] mb-2">Gallery Videos (comma separated URLs)</label>
+                    <textarea
+                      value={formData.galleryVideos}
+                      onChange={(e) => setFormData({...formData, galleryVideos: e.target.value})}
+                      placeholder="https://..., https://..."
+                      rows={2}
+                      className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none"
+                    />
+                  </div>
+                  <div className="mt-4 flex items-center gap-3">
+                    <input 
+                      type="checkbox"
+                      id="isFeatured"
+                      checked={formData.isFeatured}
+                      onChange={(e) => setFormData({...formData, isFeatured: e.target.checked})}
+                      className="w-5 h-5 text-[#C9940A] border-[#dbb84a] focus:ring-[#C9940A]"
+                    />
+                    <label htmlFor="isFeatured" className="text-sm font-bold text-[#3D0C1A]">Featured Vendor</label>
+                  </div>
                 </div>
                 
                 {/* Admin-only contact fields */}
