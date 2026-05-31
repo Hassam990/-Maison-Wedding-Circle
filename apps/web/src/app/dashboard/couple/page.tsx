@@ -211,11 +211,14 @@ export default async function CoupleDashboardPage() {
         </div>
 
         <div className="flex flex-wrap gap-3">
+          <Link href="/dashboard/couple/bookings">
+            <Button>View Bookings</Button>
+          </Link>
           <Link href="/dashboard/messages">
             <Button variant="outline">Messages</Button>
           </Link>
           <form action="/dashboard/couple/plan">
-            <Button type="submit">Update plan</Button>
+            <Button type="submit" variant="outline">Update plan</Button>
           </form>
           <form action="/vendors">
             <Button type="submit" variant="outline">
