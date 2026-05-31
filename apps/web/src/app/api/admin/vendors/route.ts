@@ -47,7 +47,18 @@ export async function POST(request: Request) {
       adminWhatsApp,
       adminEmail,
       userEmail,
-      userName
+      userName,
+      logoUrl,
+      coverUrl,
+      bannerUrl,
+      instagramUrl,
+      websiteUrl,
+      priceRange,
+      servicesOffered,
+      galleryPhotos,
+      galleryVideos,
+      weddingHighlights,
+      isFeatured
     } = data;
 
     if (!userEmail || !businessName) {
@@ -89,7 +100,18 @@ export async function POST(request: Request) {
         rating,
         adminPhone,
         adminWhatsApp,
-        adminEmail
+        adminEmail,
+        logoUrl,
+        coverUrl,
+        bannerUrl,
+        instagramUrl,
+        websiteUrl,
+        priceRange,
+        servicesOffered: Array.isArray(servicesOffered) ? servicesOffered : [],
+        galleryPhotos: Array.isArray(galleryPhotos) ? galleryPhotos : [],
+        galleryVideos: Array.isArray(galleryVideos) ? galleryVideos : [],
+        weddingHighlights: Array.isArray(weddingHighlights) ? weddingHighlights : [],
+        isFeatured: !!isFeatured
       },
       include: { user: { select: { name: true, email: true } } }
     });

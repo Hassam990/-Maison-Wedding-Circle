@@ -40,10 +40,13 @@ interface Vendor {
   adminWhatsApp?: string | null;
   adminEmail?: string | null;
   logoUrl?: string | null;
+  coverUrl?: string | null;
+  bannerUrl?: string | null;
   instagramUrl?: string | null;
   websiteUrl?: string | null;
   priceRange?: string | null;
   servicesOffered?: string[];
+  portfolioImages?: string[];
   galleryPhotos?: string[];
   galleryVideos?: string[];
   weddingHighlights?: string[];
@@ -69,10 +72,13 @@ interface VendorFormData {
   userEmail: string;
   userName: string;
   logoUrl: string;
+  coverUrl: string;
+  bannerUrl: string;
   instagramUrl: string;
   websiteUrl: string;
   priceRange: string;
   servicesOffered: string;
+  portfolioImages: string;
   galleryPhotos: string;
   galleryVideos: string;
   weddingHighlights: string;
@@ -93,10 +99,13 @@ const initialFormData: VendorFormData = {
   userEmail: "",
   userName: "",
   logoUrl: "",
+  coverUrl: "",
+  bannerUrl: "",
   instagramUrl: "",
   websiteUrl: "",
   priceRange: "",
   servicesOffered: "",
+  portfolioImages: "",
   galleryPhotos: "",
   galleryVideos: "",
   weddingHighlights: "",
@@ -110,6 +119,86 @@ export default function AdminVendorsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingVendor, setEditingVendor] = useState<Vendor | null>(null);
   const [formData, setFormData] = useState<VendorFormData>(initialFormData);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: keyof VendorFormData) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const toastId = toast.loading("Uploading file...");
+    
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataUpload,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setFormData(prev => ({
+          ...prev,
+          [field]: data.url
+        }));
+        toast.success("File uploaded successfully", { id: toastId });
+      } else {
+        toast.error("Upload failed", { id: toastId });
+      }
+    } catch (error) {
+      toast.error("Upload error", { id: toastId });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleMultipleFilesUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: keyof VendorFormData) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    const toastId = toast.loading(`Uploading ${files.length} file(s)...`);
+    
+    try {
+      const uploadedUrls: string[] = [];
+      
+      for (let i = 0; i < files.length; i++) {
+        const formDataUpload = new FormData();
+        formDataUpload.append("file", files[i]);
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formDataUpload,
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          uploadedUrls.push(data.url);
+        }
+      }
+
+      if (uploadedUrls.length > 0) {
+        setFormData(prev => {
+          const currentVal = prev[field] as string;
+          const currentList = currentVal ? currentVal.split(",").map(s => s.trim()).filter(Boolean) : [];
+          const newList = [...currentList, ...uploadedUrls];
+          return {
+            ...prev,
+            [field]: newList.join(", ")
+          };
+        });
+        toast.success(`Successfully uploaded ${uploadedUrls.length} file(s)`, { id: toastId });
+      } else {
+        toast.error("All uploads failed", { id: toastId });
+      }
+    } catch (error) {
+      toast.error("Upload error", { id: toastId });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     fetchVendors();
@@ -188,10 +277,13 @@ export default function AdminVendorsPage() {
       userEmail: vendor.user.email || "",
       userName: vendor.user.name || "",
       logoUrl: vendor.logoUrl || "",
+      coverUrl: vendor.coverUrl || "",
+      bannerUrl: vendor.bannerUrl || "",
       instagramUrl: vendor.instagramUrl || "",
       websiteUrl: vendor.websiteUrl || "",
       priceRange: vendor.priceRange || "",
       servicesOffered: vendor.servicesOffered ? vendor.servicesOffered.join(", ") : "",
+      portfolioImages: vendor.portfolioImages ? vendor.portfolioImages.join(", ") : "",
       galleryPhotos: vendor.galleryPhotos ? vendor.galleryPhotos.join(", ") : "",
       galleryVideos: vendor.galleryVideos ? vendor.galleryVideos.join(", ") : "",
       weddingHighlights: vendor.weddingHighlights ? vendor.weddingHighlights.join(", ") : "",
@@ -215,10 +307,13 @@ export default function AdminVendorsPage() {
         adminWhatsApp: formData.adminWhatsApp || null,
         adminEmail: formData.adminEmail || null,
         logoUrl: formData.logoUrl || null,
+        coverUrl: formData.coverUrl || null,
+        bannerUrl: formData.bannerUrl || null,
         instagramUrl: formData.instagramUrl || null,
         websiteUrl: formData.websiteUrl || null,
         priceRange: formData.priceRange || null,
         servicesOffered: formData.servicesOffered.split(",").map(s => s.trim()).filter(Boolean),
+        portfolioImages: formData.portfolioImages.split(",").map(s => s.trim()).filter(Boolean),
         galleryPhotos: formData.galleryPhotos.split(",").map(s => s.trim()).filter(Boolean),
         galleryVideos: formData.galleryVideos.split(",").map(s => s.trim()).filter(Boolean),
         weddingHighlights: formData.weddingHighlights.split(",").map(s => s.trim()).filter(Boolean),
@@ -528,12 +623,66 @@ export default function AdminVendorsPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div>
                       <label className="block text-sm font-bold text-[#8a6200] mb-2">Logo URL</label>
-                      <Input 
-                        value={formData.logoUrl}
-                        onChange={(e) => setFormData({...formData, logoUrl: e.target.value})}
-                        placeholder="https://..."
-                        className="border-[#dbb84a] focus:ring-[#C9940A]"
-                      />
+                      <div className="flex gap-2">
+                        <Input 
+                          value={formData.logoUrl}
+                          onChange={(e) => setFormData({...formData, logoUrl: e.target.value})}
+                          placeholder="https://..."
+                          className="border-[#dbb84a] focus:ring-[#C9940A] flex-1"
+                        />
+                        <label className="cursor-pointer bg-[#3D0C1A] text-white hover:bg-[#5a122a] text-xs font-bold px-4 py-3 rounded-xl flex items-center justify-center transition-all whitespace-nowrap">
+                          {uploading ? "Uploading..." : "Upload Logo"}
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            disabled={uploading}
+                            className="hidden" 
+                            onChange={(e) => handleFileUpload(e, 'logoUrl')} 
+                          />
+                        </label>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-[#8a6200] mb-2">Cover Image URL</label>
+                      <div className="flex gap-2">
+                        <Input 
+                          value={formData.coverUrl}
+                          onChange={(e) => setFormData({...formData, coverUrl: e.target.value})}
+                          placeholder="https://..."
+                          className="border-[#dbb84a] focus:ring-[#C9940A] flex-1"
+                        />
+                        <label className="cursor-pointer bg-[#3D0C1A] text-white hover:bg-[#5a122a] text-xs font-bold px-4 py-3 rounded-xl flex items-center justify-center transition-all whitespace-nowrap">
+                          {uploading ? "Uploading..." : "Upload Cover"}
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            disabled={uploading}
+                            className="hidden" 
+                            onChange={(e) => handleFileUpload(e, 'coverUrl')} 
+                          />
+                        </label>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-[#8a6200] mb-2">Banner Image URL</label>
+                      <div className="flex gap-2">
+                        <Input 
+                          value={formData.bannerUrl}
+                          onChange={(e) => setFormData({...formData, bannerUrl: e.target.value})}
+                          placeholder="https://..."
+                          className="border-[#dbb84a] focus:ring-[#C9940A] flex-1"
+                        />
+                        <label className="cursor-pointer bg-[#3D0C1A] text-white hover:bg-[#5a122a] text-xs font-bold px-4 py-3 rounded-xl flex items-center justify-center transition-all whitespace-nowrap">
+                          {uploading ? "Uploading..." : "Upload Banner"}
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            disabled={uploading}
+                            className="hidden" 
+                            onChange={(e) => handleFileUpload(e, 'bannerUrl')} 
+                          />
+                        </label>
+                      </div>
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-[#8a6200] mb-2">Website URL</label>
@@ -573,34 +722,96 @@ export default function AdminVendorsPage() {
                     />
                   </div>
                   <div className="mt-4">
+                    <label className="block text-sm font-bold text-[#8a6200] mb-2">Portfolio Images (comma separated URLs)</label>
+                    <div className="space-y-2">
+                      <textarea
+                        value={formData.portfolioImages}
+                        onChange={(e) => setFormData({...formData, portfolioImages: e.target.value})}
+                        placeholder="https://..., https://..."
+                        rows={2}
+                        className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none"
+                      />
+                      <label className="inline-flex cursor-pointer bg-[#3D0C1A] text-white hover:bg-[#5a122a] text-xs font-bold px-4 py-2 rounded-xl items-center justify-center transition-all">
+                        {uploading ? "Uploading..." : "Upload Portfolio Images"}
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          multiple
+                          disabled={uploading}
+                          className="hidden" 
+                          onChange={(e) => handleMultipleFilesUpload(e, 'portfolioImages')} 
+                        />
+                      </label>
+                    </div>
+                  </div>
+                  <div className="mt-4">
                     <label className="block text-sm font-bold text-[#8a6200] mb-2">Gallery Photos (comma separated URLs)</label>
-                    <textarea
-                      value={formData.galleryPhotos}
-                      onChange={(e) => setFormData({...formData, galleryPhotos: e.target.value})}
-                      placeholder="https://..., https://..."
-                      rows={2}
-                      className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none"
-                    />
+                    <div className="space-y-2">
+                      <textarea
+                        value={formData.galleryPhotos}
+                        onChange={(e) => setFormData({...formData, galleryPhotos: e.target.value})}
+                        placeholder="https://..., https://..."
+                        rows={2}
+                        className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none"
+                      />
+                      <label className="inline-flex cursor-pointer bg-[#3D0C1A] text-white hover:bg-[#5a122a] text-xs font-bold px-4 py-2 rounded-xl items-center justify-center transition-all">
+                        {uploading ? "Uploading..." : "Upload Photos"}
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          multiple
+                          disabled={uploading}
+                          className="hidden" 
+                          onChange={(e) => handleMultipleFilesUpload(e, 'galleryPhotos')} 
+                        />
+                      </label>
+                    </div>
                   </div>
                   <div className="mt-4">
                     <label className="block text-sm font-bold text-[#8a6200] mb-2">Wedding Highlights (comma separated URLs)</label>
-                    <textarea
-                      value={formData.weddingHighlights}
-                      onChange={(e) => setFormData({...formData, weddingHighlights: e.target.value})}
-                      placeholder="https://..., https://..."
-                      rows={2}
-                      className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none"
-                    />
+                    <div className="space-y-2">
+                      <textarea
+                        value={formData.weddingHighlights}
+                        onChange={(e) => setFormData({...formData, weddingHighlights: e.target.value})}
+                        placeholder="https://..., https://..."
+                        rows={2}
+                        className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none"
+                      />
+                      <label className="inline-flex cursor-pointer bg-[#3D0C1A] text-white hover:bg-[#5a122a] text-xs font-bold px-4 py-2 rounded-xl items-center justify-center transition-all">
+                        {uploading ? "Uploading..." : "Upload Highlights"}
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          multiple
+                          disabled={uploading}
+                          className="hidden" 
+                          onChange={(e) => handleMultipleFilesUpload(e, 'weddingHighlights')} 
+                        />
+                      </label>
+                    </div>
                   </div>
                   <div className="mt-4">
                     <label className="block text-sm font-bold text-[#8a6200] mb-2">Gallery Videos (comma separated URLs)</label>
-                    <textarea
-                      value={formData.galleryVideos}
-                      onChange={(e) => setFormData({...formData, galleryVideos: e.target.value})}
-                      placeholder="https://..., https://..."
-                      rows={2}
-                      className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none"
-                    />
+                    <div className="space-y-2">
+                      <textarea
+                        value={formData.galleryVideos}
+                        onChange={(e) => setFormData({...formData, galleryVideos: e.target.value})}
+                        placeholder="https://..., https://..."
+                        rows={2}
+                        className="w-full px-4 py-3 border border-[#dbb84a] rounded-xl focus:ring-2 focus:ring-[#C9940A] outline-none"
+                      />
+                      <label className="inline-flex cursor-pointer bg-[#3D0C1A] text-white hover:bg-[#5a122a] text-xs font-bold px-4 py-2 rounded-xl items-center justify-center transition-all">
+                        {uploading ? "Uploading..." : "Upload Videos"}
+                        <input 
+                          type="file" 
+                          accept="video/*" 
+                          multiple
+                          disabled={uploading}
+                          className="hidden" 
+                          onChange={(e) => handleMultipleFilesUpload(e, 'galleryVideos')} 
+                        />
+                      </label>
+                    </div>
                   </div>
                   <div className="mt-4 flex items-center gap-3">
                     <input 

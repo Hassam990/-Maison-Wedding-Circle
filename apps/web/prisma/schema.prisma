@@ -80,11 +80,14 @@ model VendorProfile {
   adminEmail       String?
   // New fields from requirements
   logoUrl          String?
+  coverUrl         String? // Cover image for vendor profile
+  bannerUrl        String? // Banner image for vendor profile
   instagramUrl     String?
   websiteUrl       String?
   priceRange       String? // £, ££, £££, Luxury, or "Starting from £1500"
   servicesOffered  String[]  @default([]) // e.g., ["Mehndi", "Nikkah", "Walima"]
   // Gallery fields
+  portfolioImages  String[]  @default([]) // Portfolio/featured images
   galleryPhotos    String[]  @default([]) // URLs of photos
   galleryVideos    String[]  @default([]) // URLs of videos/reels
   weddingHighlights String[] @default([]) // URLs of wedding highlight photos/videos

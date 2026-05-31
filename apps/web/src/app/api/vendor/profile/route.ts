@@ -40,10 +40,13 @@ export async function GET() {
         createdAt: true,
         updatedAt: true,
         logoUrl: true,
+        coverUrl: true,
+        bannerUrl: true,
         instagramUrl: true,
         websiteUrl: true,
         priceRange: true,
         servicesOffered: true,
+        portfolioImages: true,
         galleryPhotos: true,
         galleryVideos: true,
         weddingHighlights: true,
@@ -80,10 +83,13 @@ export async function PUT(request: Request) {
     city?: string;
     bio?: string | null;
     logoUrl?: string | null;
+    coverUrl?: string | null;
+    bannerUrl?: string | null;
     instagramUrl?: string | null;
     websiteUrl?: string | null;
     priceRange?: string | null;
     servicesOffered?: string[];
+    portfolioImages?: string[];
     galleryPhotos?: string[];
     galleryVideos?: string[];
     weddingHighlights?: string[];
@@ -100,10 +106,13 @@ export async function PUT(request: Request) {
   const city = body.city?.trim() || "";
   const bio = typeof body.bio === "string" ? body.bio.trim() : null;
   const logoUrl = typeof body.logoUrl === "string" ? (body.logoUrl.trim() || null) : null;
+  const coverUrl = typeof body.coverUrl === "string" ? (body.coverUrl.trim() || null) : null;
+  const bannerUrl = typeof body.bannerUrl === "string" ? (body.bannerUrl.trim() || null) : null;
   const instagramUrl = typeof body.instagramUrl === "string" ? (body.instagramUrl.trim() || null) : null;
   const websiteUrl = typeof body.websiteUrl === "string" ? (body.websiteUrl.trim() || null) : null;
   const priceRange = typeof body.priceRange === "string" ? (body.priceRange.trim() || null) : null;
   const servicesOffered = Array.isArray(body.servicesOffered) ? body.servicesOffered : [];
+  const portfolioImages = Array.isArray(body.portfolioImages) ? body.portfolioImages : [];
   const galleryPhotos = Array.isArray(body.galleryPhotos) ? body.galleryPhotos : [];
   const galleryVideos = Array.isArray(body.galleryVideos) ? body.galleryVideos : [];
   const weddingHighlights = Array.isArray(body.weddingHighlights) ? body.weddingHighlights : [];
@@ -139,10 +148,13 @@ export async function PUT(request: Request) {
         city,
         bio,
         logoUrl,
+        coverUrl,
+        bannerUrl,
         instagramUrl,
         websiteUrl,
         priceRange,
         servicesOffered,
+        portfolioImages,
         galleryPhotos,
         galleryVideos,
         weddingHighlights,
@@ -160,10 +172,13 @@ export async function PUT(request: Request) {
         createdAt: true,
         updatedAt: true,
         logoUrl: true,
+        coverUrl: true,
+        bannerUrl: true,
         instagramUrl: true,
         websiteUrl: true,
         priceRange: true,
         servicesOffered: true,
+        portfolioImages: true,
         galleryPhotos: true,
         galleryVideos: true,
         weddingHighlights: true,

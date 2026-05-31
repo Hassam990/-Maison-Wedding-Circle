@@ -87,12 +87,18 @@ export default async function CoupleBookingsPage() {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Link href="/dashboard/couple">
-            <Button variant="outline">Back to Dashboard</Button>
+          <Link 
+            href="/dashboard/couple"
+            className="inline-flex items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary h-10 px-8 py-2 border border-primary text-primary hover:bg-primary/10"
+          >
+            Back to Dashboard
           </Link>
-          <form action="/vendors">
-            <Button type="submit">Find Vendors</Button>
-          </form>
+          <Link 
+            href="/vendors"
+            className="inline-flex items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary h-10 px-8 py-2 bg-primary text-white hover:bg-primary-dark"
+          >
+            Find Vendors
+          </Link>
         </div>
       </section>
 
@@ -119,10 +125,10 @@ export default async function CoupleBookingsPage() {
             </div>
           ) : (
             bookings.map((booking) => (
-              <div
+              <Link
                 key={booking.id}
-                className="rounded-2xl border border-neutral-200 p-4 hover:border-primary transition-colors cursor-pointer"
-                onClick={() => window.location.href = `/dashboard/messages/${booking.id}`}
+                href={`/dashboard/messages/${booking.id}`}
+                className="block rounded-2xl border border-neutral-200 p-4 hover:border-primary transition-colors"
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="flex items-start gap-4">
@@ -167,7 +173,7 @@ export default async function CoupleBookingsPage() {
                     </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))
           )}
         </CardContent>

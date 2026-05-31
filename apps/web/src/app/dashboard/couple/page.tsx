@@ -211,11 +211,17 @@ export default async function CoupleDashboardPage() {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Link href="/dashboard/couple/bookings">
-            <Button>View Bookings</Button>
+          <Link 
+            href="/dashboard/couple/bookings"
+            className="inline-flex items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary h-10 px-8 py-2 bg-primary text-white hover:bg-primary-dark"
+          >
+            View Bookings
           </Link>
-          <Link href="/dashboard/messages">
-            <Button variant="outline">Messages</Button>
+          <Link 
+            href="/dashboard/messages"
+            className="inline-flex items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary h-10 px-8 py-2 border border-primary text-primary hover:bg-primary/10"
+          >
+            Messages
           </Link>
           <form action="/dashboard/couple/plan">
             <Button type="submit" variant="outline">Update plan</Button>
@@ -389,10 +395,10 @@ export default async function CoupleDashboardPage() {
                 </div>
               ) : (
                 recentInquiries.map((inquiry) => (
-                  <div
+                  <Link
                     key={inquiry.id}
-                    className="rounded-2xl border border-neutral-200 p-4 hover:border-primary transition-colors cursor-pointer"
-                    onClick={() => window.location.href = `/dashboard/messages/${inquiry.id}`}
+                    href={`/dashboard/messages/${inquiry.id}`}
+                    className="block rounded-2xl border border-neutral-200 p-4 hover:border-primary transition-colors"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
@@ -415,7 +421,7 @@ export default async function CoupleDashboardPage() {
                         Event date shared: {formatDate(inquiry.eventDate)}
                       </p>
                     ) : null}
-                  </div>
+                  </Link>
                 ))
               )}
             </CardContent>

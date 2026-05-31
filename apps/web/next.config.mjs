@@ -13,9 +13,8 @@ const nextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ['lucide-react', 'framer-motion', 'gsap', 'ogl'],
+    optimizePackageImports: ['lucide-react'],
   },
-  swcMinify: true,
   poweredByHeader: false,
   reactStrictMode: true,
   async redirects() {

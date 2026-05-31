@@ -70,9 +70,12 @@ export default async function VendorDashboardPage() {
               Once your profile is complete, you can return here to monitor inquiry activity and
               manage your listing.
             </div>
-            <form action="/dashboard/vendor/profile">
-              <Button type="submit">Set up vendor profile</Button>
-            </form>
+            <Link 
+              href="/dashboard/vendor/profile"
+              className="inline-flex items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary h-10 px-8 py-2 bg-primary text-white hover:bg-primary-dark shrink-0"
+            >
+              Set up vendor profile
+            </Link>
           </CardContent>
         </Card>
       </div>
@@ -157,18 +160,25 @@ export default async function VendorDashboardPage() {
           </div>
         </div>
 
-        <div className="flex gap-3">
-          <Link href="/dashboard/messages">
-            <Button variant="outline">Messages</Button>
+        <div className="flex flex-wrap gap-3">
+          <Link 
+            href="/dashboard/messages"
+            className="inline-flex items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary h-10 px-8 py-2 border border-primary text-primary hover:bg-primary/10"
+          >
+            Messages
           </Link>
-          <form action="/vendors">
-            <Button type="submit" variant="outline">
-              View marketplace
-            </Button>
-          </form>
-          <form action="/dashboard/vendor/profile">
-            <Button type="submit">Edit profile</Button>
-          </form>
+          <Link 
+            href="/vendors"
+            className="inline-flex items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary h-10 px-8 py-2 border border-primary text-primary hover:bg-primary/10"
+          >
+            View marketplace
+          </Link>
+          <Link 
+            href="/dashboard/vendor/profile"
+            className="inline-flex items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary h-10 px-8 py-2 bg-primary text-white hover:bg-primary-dark"
+          >
+            Edit profile
+          </Link>
         </div>
       </div>
 
@@ -205,10 +215,10 @@ export default async function VendorDashboardPage() {
           ) : (
             <div className="space-y-4">
               {recentInquiries.map((inquiry) => (
-                <div
+                <Link
                   key={inquiry.id}
-                  className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm hover:border-primary transition-colors cursor-pointer"
-                  onClick={() => window.location.href = `/dashboard/messages/${inquiry.id}`}
+                  href={`/dashboard/messages/${inquiry.id}`}
+                  className="block rounded-2xl border border-stone-200 bg-white p-5 shadow-sm hover:border-primary transition-colors"
                 >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="space-y-2">
@@ -226,7 +236,7 @@ export default async function VendorDashboardPage() {
                       {formatDate(inquiry.createdAt)}
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
