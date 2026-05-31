@@ -6,6 +6,8 @@ import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import SmoothSlider from "@/components/ui/SmoothSlider";
 import { getSiteContent } from "@/lib/cms";
 import ConsultationForm from "@/components/forms/ConsultationForm";
+import { CardSplitAccordian } from "@/components/ui/card-split-accordian";
+import { Layers, Send, ShieldCheck, Heart, Zap, Sparkles } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
@@ -154,6 +156,54 @@ export default async function Home() {
               ))}
            </div>
          </ScrollReveal>
+      </section>
+
+      {/* FAQ SECTION */}
+      <section className="py-24 bg-ivory/20">
+        <ScrollReveal className="container mx-auto px-4 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="text-sm uppercase tracking-widest text-primary font-bold mb-2 block">FAQs</span>
+            <h2 className="text-4xl text-burgundy font-bold">Frequently Asked Questions</h2>
+            <p className="text-foreground/70 max-w-2xl mx-auto font-medium mt-4">
+              Got questions? We’ve got answers. If you don’t find what you’re looking for, get in touch with us!
+            </p>
+          </div>
+          
+          <CardSplitAccordian
+            items={[
+              {
+                id: 1,
+                title: "What services do you offer?",
+                icon: <Layers className="size-6 md:size-[1.625rem]" />,
+                content: "We offer curated vendor matching, wedding planning, event coordination, and personal consultations for South Asian weddings across the USA.",
+              },
+              {
+                id: 2,
+                title: "How do you select vendors?",
+                icon: <ShieldCheck className="size-6 md:size-[1.625rem]" />,
+                content: "All vendors are personally vetted, verified, and have a proven track record of excellence in South Asian wedding services.",
+              },
+              {
+                id: 3,
+                title: "Is there a cost for couples?",
+                icon: <Heart className="size-6 md:size-[1.625rem]" />,
+                content: "Our matching and planning services are completely free for couples! We don’t take commissions from vendors either.",
+              },
+              {
+                id: 4,
+                title: "How long does the process take?",
+                icon: <Zap className="size-6 md:size-[1.625rem]" />,
+                content: "From initial consultation to your wedding day, we’re with you every step — timeline depends on your wedding date and requirements.",
+              },
+              {
+                id: 5,
+                title: "Do you cover all US cities?",
+                icon: <Sparkles className="size-6 md:size-[1.625rem]" />,
+                content: "We currently serve major metropolitan areas including Atlanta, New York, Dallas, Houston, Chicago, and more — reach out to check your location!",
+              },
+            ]}
+          />
+        </ScrollReveal>
       </section>
       
       {/* START PLANNING WIZARD / FORM */}
