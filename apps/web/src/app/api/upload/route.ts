@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { promises as fs } from "fs";
 import path from "path";
+import sharp from "sharp";
 
 export const dynamic = 'force-dynamic';
 
@@ -31,11 +32,19 @@ export async function POST(req: Request) {
     const timestamp = Date.now();
     const ext = path.extname(file.name) || ".png";
     const baseName = path.basename(file.name, ext).replace(/[^a-zA-Z0-9]/g, "_");
-    const fileName = `${baseName}_${timestamp}${ext}`;
+    const fileName = `${baseName}_${timestamp}.webp`;
     const filePath = path.join(uploadDir, fileName);
 
-    // Write file
-    await fs.writeFile(filePath, buffer);
+    // Optimize and compress image with sharp
+    await sharp(buffer)
+      .resize({
+        width: 1200, // Resize to max width of 1200px
+        height: 1200,
+        fit: 'inside',
+        withoutEnlargement: true
+      })
+      .webp({ quality: 80 }) // Convert to webp with 80% quality
+      .toFile(filePath);
 
     // Return relative URL
     return NextResponse.json({ url: `/uploads/${fileName}` });
