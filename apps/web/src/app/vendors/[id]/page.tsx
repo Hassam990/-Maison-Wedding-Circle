@@ -84,133 +84,173 @@ export default async function VendorDetailPage({ params }: { params: { id: strin
     }
 
     return (
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-12">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1">
-            <Link href="/vendors" className="text-sm text-stone-500 hover:text-stone-900 transition-colors">
-              ← Back to Directory
-            </Link>
-            <div className="flex items-center gap-4">
-              {vendor.logoUrl && (
-                <img src={vendor.logoUrl} alt={vendor.businessName} className="w-16 h-16 rounded-full object-cover" />
-              )}
-              <div>
-                <h1 className="font-serif text-4xl text-stone-900">{vendor.businessName}</h1>
-                <div className="flex flex-wrap items-center gap-3 text-sm text-stone-600 mt-1">
-                  <span className="rounded-full bg-stone-100 px-3 py-1 text-xs font-medium uppercase tracking-wider text-stone-800">
-                    {vendor.category}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="h-1 w-1 rounded-full bg-stone-300" />
-                    {vendor.city}
-                  </span>
-                  {vendor.verified && (
-                    <span className="flex items-center gap-1 text-primary">
-                      <span className="text-sm">✓</span> Verified Professional
-                    </span>
-                  )}
-                  {vendor.priceRange && (
-                    <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800">
-                      {vendor.priceRange}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Gallery Section */}
-        {vendor.galleryPhotos && vendor.galleryPhotos.length > 0 && (
-          <section className="space-y-4">
-            <h2 className="font-serif text-2xl text-stone-900">Gallery</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {vendor.galleryPhotos.map((photo, index) => (
-                <div key={index} className="relative aspect-square rounded-2xl overflow-hidden">
-                  <img src={photo} alt={`Gallery ${index + 1}`} className="w-full h-full object-cover" />
-                </div>
-              ))}
-            </div>
-          </section>
+      &lt;div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-12"&gt;
+        {/* Banner Image */}
+        {vendor.bannerUrl &amp;&amp; (
+          &lt;div className="w-full h-64 sm:h-80 rounded-3xl overflow-hidden"&gt;
+            &lt;img 
+              src={vendor.bannerUrl} 
+              alt={`${vendor.businessName} banner`} 
+              className="w-full h-full object-cover"
+            /&gt;
+          &lt;/div&gt;
         )}
 
-        <div className="grid gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2 space-y-10">
-            <section className="space-y-4">
-              <h2 className="font-serif text-2xl text-stone-900">About the professional</h2>
-              <div className="prose prose-stone max-w-none text-stone-600 leading-relaxed">
-                {vendor.bio}
-              </div>
-            </section>
+        {/* Header Section */}
+        &lt;div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"&gt;
+          &lt;div className="space-y-1"&gt;
+            &lt;Link href="/vendors" className="text-sm text-stone-500 hover:text-stone-900 transition-colors"&gt;
+              ← Back to Directory
+            &lt;/Link&gt;
+            &lt;div className="flex items-center gap-4"&gt;
+              {vendor.logoUrl &amp;&amp; (
+                &lt;div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-lg"&gt;
+                  &lt;img src={vendor.logoUrl} alt={vendor.businessName} className="w-full h-full object-cover" /&gt;
+                &lt;/div&gt;
+              )}
+              &lt;div&gt;
+                &lt;h1 className="font-serif text-4xl text-stone-900"&gt;{vendor.businessName}&lt;/h1&gt;
+                &lt;div className="flex flex-wrap items-center gap-3 text-sm text-stone-600 mt-1"&gt;
+                  &lt;span className="rounded-full bg-stone-100 px-3 py-1 text-xs font-medium uppercase tracking-wider text-stone-800"&gt;
+                    {vendor.category}
+                  &lt;/span&gt;
+                  &lt;span className="flex items-center gap-1.5"&gt;
+                    &lt;span className="h-1 w-1 rounded-full bg-stone-300" /&gt;
+                    {vendor.city}
+                  &lt;/span&gt;
+                  {vendor.verified &amp;&amp; (
+                    &lt;span className="flex items-center gap-1 text-primary"&gt;
+                      &lt;span className="text-sm"&gt;✓&lt;/span&gt; Verified Professional
+                    &lt;/span&gt;
+                  )}
+                  {vendor.priceRange &amp;&amp; (
+                    &lt;span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800"&gt;
+                      {vendor.priceRange}
+                    &lt;/span&gt;
+                  )}
+                &lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
 
-            {/* Services Offered Section */}
-            {vendor.servicesOffered && vendor.servicesOffered.length > 0 && (
-              <section className="space-y-4 pt-4 border-t border-stone-200">
-                <h2 className="font-serif text-2xl text-stone-900">Services Offered</h2>
-                <div className="flex flex-wrap gap-2">
-                  {vendor.servicesOffered.map((service, index) => (
-                    <span key={index} className="px-4 py-2 rounded-full bg-stone-100 text-stone-700 text-sm font-medium">
-                      {service}
-                    </span>
+        {/* Cover Image */}
+        {vendor.coverUrl &amp;&amp; (
+          &lt;div className="w-full h-48 sm:h-64 rounded-2xl overflow-hidden"&gt;
+            &lt;img 
+              src={vendor.coverUrl} 
+              alt={`${vendor.businessName} cover`} 
+              className="w-full h-full object-cover"
+            /&gt;
+          &lt;/div&gt;
+        )}
+
+        &lt;div className="grid gap-8 lg:grid-cols-3"&gt;
+          &lt;div className="lg:col-span-2 space-y-10"&gt;
+            {/* Portfolio Section */}
+            {vendor.portfolioImages &amp;&amp; vendor.portfolioImages.length &gt; 0 &amp;&amp; (
+              &lt;section className="space-y-4"&gt;
+                &lt;h2 className="font-serif text-2xl text-stone-900"&gt;Portfolio&lt;/h2&gt;
+                &lt;div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"&gt;
+                  {vendor.portfolioImages.map((photo, index) =&gt; (
+                    &lt;div key={index} className="relative aspect-square rounded-2xl overflow-hidden"&gt;
+                      &lt;img src={photo} alt={`Portfolio ${index + 1}`} className="w-full h-full object-cover" /&gt;
+                    &lt;/div&gt;
                   ))}
-                </div>
-              </section>
+                &lt;/div&gt;
+              &lt;/section&gt;
             )}
 
-            <section className="space-y-4 pt-4 border-t border-stone-200">
-              <div className="flex items-center justify-between">
-                <h2 className="font-serif text-2xl text-stone-900">Client Reviews</h2>
-                <div className="flex items-center gap-2">
-                   <span className="text-2xl font-bold text-stone-900">{vendor.rating}</span>
-                   <div className="text-primary text-sm">★★★★★</div>
-                   <span className="text-sm text-stone-500">({reviewsCount} reviews)</span>
-                </div>
-              </div>
+            &lt;section className="space-y-4"&gt;
+              &lt;h2 className="font-serif text-2xl text-stone-900"&gt;About the professional&lt;/h2&gt;
+              &lt;div className="prose prose-stone max-w-none text-stone-600 leading-relaxed"&gt;
+                {vendor.bio}
+              &lt;/div&gt;
+            &lt;/section&gt;
+
+            {/* Services Offered Section */}
+            {vendor.servicesOffered &amp;&amp; vendor.servicesOffered.length &gt; 0 &amp;&amp; (
+              &lt;section className="space-y-4 pt-4 border-t border-stone-200"&gt;
+                &lt;h2 className="font-serif text-2xl text-stone-900"&gt;Services Offered&lt;/h2&gt;
+                &lt;div className="flex flex-wrap gap-2"&gt;
+                  {vendor.servicesOffered.map((service, index) =&gt; (
+                    &lt;span key={index} className="px-4 py-2 rounded-full bg-stone-100 text-stone-700 text-sm font-medium"&gt;
+                      {service}
+                    &lt;/span&gt;
+                  ))}
+                &lt;/div&gt;
+              &lt;/section&gt;
+            )}
+
+            {/* Gallery Section */}
+            {(vendor.galleryPhotos &amp;&amp; vendor.galleryPhotos.length &gt; 0) || (vendor.galleryVideos &amp;&amp; vendor.galleryVideos.length &gt; 0) || (vendor.weddingHighlights &amp;&amp; vendor.weddingHighlights.length &gt; 0) ? (
+              &lt;section className="space-y-4 pt-4 border-t border-stone-200"&gt;
+                &lt;h2 className="font-serif text-2xl text-stone-900"&gt;Gallery&lt;/h2&gt;
+                &lt;div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"&gt;
+                  {[...(vendor.galleryPhotos || []), ...(vendor.galleryVideos || []), ...(vendor.weddingHighlights || [])].map((media, index) =&gt; (
+                    &lt;div key={index} className="relative aspect-square rounded-2xl overflow-hidden"&gt;
+                      &lt;img src={media} alt={`Gallery ${index + 1}`} className="w-full h-full object-cover" /&gt;
+                    &lt;/div&gt;
+                  ))}
+                &lt;/div&gt;
+              &lt;/section&gt;
+            ) : null}
+
+            &lt;section className="space-y-4 pt-4 border-t border-stone-200"&gt;
+              &lt;div className="flex items-center justify-between"&gt;
+                &lt;h2 className="font-serif text-2xl text-stone-900"&gt;Client Reviews&lt;/h2&gt;
+                &lt;div className="flex items-center gap-2"&gt;
+                   &lt;span className="text-2xl font-bold text-stone-900"&gt;{vendor.rating}&lt;/span&gt;
+                   &lt;div className="text-primary text-sm"&gt;★★★★★&lt;/div&gt;
+                   &lt;span className="text-sm text-stone-500"&gt;({reviewsCount} reviews)&lt;/span&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
               
               {reviewsCount === 0 ? (
-                <div className="rounded-2xl border border-dashed border-stone-200 p-12 text-center text-sm text-stone-500">
+                &lt;div className="rounded-2xl border border-dashed border-stone-200 p-12 text-center text-sm text-stone-500"&gt;
                   No reviews yet. Be the first to share your experience after booking!
-                </div>
+                &lt;/div&gt;
               ) : (
-                 <p className="text-sm text-stone-500 italic">Detailed reviews are loading...</p>
+                 &lt;p className="text-sm text-stone-500 italic"&gt;Detailed reviews are loading...&lt;/p&gt;
               )}
-            </section>
-          </div>
+            &lt;/section&gt;
+          &lt;/div&gt;
 
-          <div className="space-y-6">
-            <Card className="sticky top-24 border-stone-200 shadow-xl shadow-stone-200/40 overflow-hidden">
-              <div className="h-2 bg-primary w-full" />
-              <CardHeader>
-                <CardTitle>Request a Consultation</CardTitle>
-                <CardDescription>
+          &lt;div className="space-y-6"&gt;
+            &lt;Card className="sticky top-24 border-stone-200 shadow-xl shadow-stone-200/40 overflow-hidden"&gt;
+              &lt;div className="h-2 bg-primary w-full" /&gt;
+              &lt;CardHeader&gt;
+                &lt;CardTitle&gt;Request a Consultation&lt;/CardTitle&gt;
+                &lt;CardDescription&gt;
                   We&apos;ll personally connect you with {vendor.businessName} for your special day.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <InquiryForm 
+                &lt;/CardDescription&gt;
+              &lt;/CardHeader&gt;
+              &lt;CardContent&gt;
+                &lt;InquiryForm 
                   vendorId={params.id} 
                   authState={
                     !session ? "guest" : 
                     session.user.role === "COUPLE" ? "couple" : "other"
                   } 
-                />
-              </CardContent>
-            </Card>
+                /&gt;
+              &lt;/CardContent&gt;
+            &lt;/Card&gt;
             
-            <Card className="border-stone-100 bg-stone-50">
-               <CardContent className="p-6">
-                  <h3 className="font-serif text-lg text-stone-900 mb-2">Maison Guarantee</h3>
-                  <p className="text-sm text-stone-600 leading-relaxed">
+            &lt;Card className="border-stone-100 bg-stone-50"&gt;
+               &lt;CardContent className="p-6"&gt;
+                  &lt;h3 className="font-serif text-lg text-stone-900 mb-2"&gt;Maison Guarantee&lt;/h3&gt;
+                  &lt;p className="text-sm text-stone-600 leading-relaxed"&gt;
                     All professionals in our network are vetted for tradition, luxury, and excellence.
-                  </p>
-               </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
+                  &lt;/p&gt;
+               &lt;/CardContent&gt;
+            &lt;/Card&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
     );
   } catch (error) {
     console.error("Fatal error in vendor detail page:", error);
     return notFound();
   }
 }
+
