@@ -482,6 +482,7 @@ export default function VendorProfilePage() {
                     className="flex w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
                   />
                 </div>
+              </div>
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Button type="submit" disabled={saving}>
@@ -509,6 +510,14 @@ export default function VendorProfilePage() {
                           category: profile.category || "",
                           city: profile.city || "",
                           bio: profile.bio || "",
+                          logoUrl: profile.logoUrl || "",
+                          instagramUrl: profile.instagramUrl || "",
+                          websiteUrl: profile.websiteUrl || "",
+                          priceRange: profile.priceRange || "",
+                          servicesOffered: profile.servicesOffered ? profile.servicesOffered.join(", ") : "",
+                          galleryPhotos: profile.galleryPhotos ? profile.galleryPhotos.join(", ") : "",
+                          galleryVideos: profile.galleryVideos ? profile.galleryVideos.join(", ") : "",
+                          weddingHighlights: profile.weddingHighlights ? profile.weddingHighlights.join(", ") : "",
                         });
                         setProfileMeta({
                           verified: profile.verified,
