@@ -190,7 +190,19 @@ export default function AdminVendorsPage() {
           toast.success("Vendor updated successfully");
         }
       } else {
-        toast.info("Add vendor functionality requires user creation. For now, use edit!");
+        const res = await fetch("/api/admin/vendors", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+        if (res.ok) {
+          const newVendor = await res.json();
+          setVendors([newVendor, ...vendors]);
+          toast.success("Vendor added successfully!");
+        } else {
+          const errorData = await res.json();
+          toast.error(errorData.error || "Failed to add vendor");
+        }
       }
       setIsModalOpen(false);
     } catch (error) {
@@ -360,6 +372,31 @@ export default function AdminVendorsPage() {
             </div>
             <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6 overflow-y-auto flex-1">
               <div className="space-y-6">
+                {!editingVendor && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    <div>
+                      <label className="block text-sm font-bold text-[#3D0C1A] mb-2">Vendor Email</label>
+                      <Input 
+                        required
+                        type="email"
+                        value={formData.userEmail}
+                        onChange={(e) => setFormData({...formData, userEmail: e.target.value})}
+                        placeholder="vendor@example.com"
+                        className="border-[#dbb84a] focus:ring-[#C9940A]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-[#3D0C1A] mb-2">Vendor Name</label>
+                      <Input 
+                        required
+                        value={formData.userName}
+                        onChange={(e) => setFormData({...formData, userName: e.target.value})}
+                        placeholder="Enter vendor name"
+                        className="border-[#dbb84a] focus:ring-[#C9940A]"
+                      />
+                    </div>
+                  </div>
+                )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label className="block text-sm font-bold text-[#3D0C1A] mb-2">Business Name</label>
