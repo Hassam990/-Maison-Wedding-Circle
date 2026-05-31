@@ -67,6 +67,10 @@ export async function POST(
 
     const inquiry = await db.vendorInquiry.findUnique({
       where: { id: params.id },
+      include: { 
+        vendor: { include: { user: true } }, 
+        couple: { include: { user: true } } 
+      },
     });
 
     if (!inquiry) {
@@ -75,18 +79,22 @@ export async function POST(
 
     let senderType: "COUPLE" | "VENDOR";
     let hasAccess = false;
+    let recipientUser: any = null;
+    
     if (session.user.role === "COUPLE") {
       const coupleProfile = await db.coupleProfile.findUnique({
         where: { userId: session.user.id },
       });
       hasAccess = coupleProfile?.id === inquiry.coupleId;
       senderType = "COUPLE";
+      recipientUser = inquiry.vendor.user;
     } else if (session.user.role === "VENDOR") {
       const vendorProfile = await db.vendorProfile.findUnique({
         where: { userId: session.user.id },
       });
       hasAccess = vendorProfile?.id === inquiry.vendorId;
       senderType = "VENDOR";
+      recipientUser = inquiry.couple.user;
     } else {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -103,6 +111,51 @@ export async function POST(
         content,
       },
     });
+
+    // Get all admins to notify
+    const admins = await db.user.findMany({
+      where: { 
+        OR: [
+          { role: "ADMIN" },
+          { role: "SUPER_ADMIN" },
+          { role: "STAFF_ADMIN" }
+        ] 
+      }
+    });
+
+    const notificationsPromises = [];
+    
+    // Notify admins
+    for (const admin of admins) {
+      notificationsPromises.push(
+        db.notification.create({
+          data: {
+            userId: admin.id,
+            type: "NEW_MESSAGE",
+            title: "New Message in Conversation",
+            body: `${session.user?.name || "A user"} sent a new message`,
+            link: `/admin/messages`
+          }
+        })
+      );
+    }
+
+    // Notify the other party in the conversation
+    if (recipientUser) {
+      notificationsPromises.push(
+        db.notification.create({
+          data: {
+            userId: recipientUser.id,
+            type: "NEW_MESSAGE",
+            title: "New Message Received",
+            body: `${session.user?.name || "Someone"} sent you a message`,
+            link: `/dashboard/messages`
+          }
+        })
+      );
+    }
+
+    await Promise.all(notificationsPromises);
 
     return NextResponse.json(message);
   } catch (error) {

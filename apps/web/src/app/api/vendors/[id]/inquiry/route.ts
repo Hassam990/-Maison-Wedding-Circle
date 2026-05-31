@@ -17,6 +17,7 @@ export async function POST(
     // Check if vendor exists
     const vendor = await db.vendorProfile.findUnique({
       where: { id: params.id },
+      include: { user: true }
     });
     if (!vendor) {
       return NextResponse.json({ message: "Vendor not found" }, { status: 404 });
@@ -26,6 +27,7 @@ export async function POST(
 
     let coupleProfile = await db.coupleProfile.findUnique({
       where: { userId: session.user.id },
+      include: { user: true }
     });
 
     if (!coupleProfile) {
@@ -33,6 +35,7 @@ export async function POST(
         data: {
           userId: session.user.id,
         },
+        include: { user: true }
       });
     }
 
@@ -53,6 +56,51 @@ export async function POST(
         content: data.message,
       },
     });
+
+    // Get all admin users (ADMIN and STAFF_ADMIN)
+    const admins = await db.user.findMany({
+      where: { 
+        OR: [
+          { role: "ADMIN" },
+          { role: "SUPER_ADMIN" },
+          { role: "STAFF_ADMIN" }
+        ] 
+      }
+    });
+
+    // Get vendor user too so we can notify them
+    const vendorUser = vendor.user;
+    const coupleUser = coupleProfile.user;
+
+    // Create notifications for all admins
+    const notificationsPromises = admins.map(admin => 
+      db.notification.create({
+        data: {
+          userId: admin.id,
+          type: "NEW_INQUIRY",
+          title: "New Vendor Inquiry",
+          body: `${coupleUser?.name || "A couple"} sent an inquiry to ${vendor.businessName || "a vendor"}`,
+          link: `/admin/vendors`
+        }
+      })
+    );
+
+    // Also notify the vendor if they are a user
+    if (vendorUser) {
+      notificationsPromises.push(
+        db.notification.create({
+          data: {
+            userId: vendorUser.id,
+            type: "NEW_INQUIRY",
+            title: "New Inquiry from Couple",
+            body: `${coupleUser?.name || "A couple"} sent you an inquiry!`,
+            link: `/dashboard/messages`
+          }
+        })
+      );
+    }
+
+    await Promise.all(notificationsPromises);
 
     return NextResponse.json(inquiry);
   } catch (error) {
