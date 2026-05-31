@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { promises as fs } from "fs";
-import path from "path";
+import { put } from "@vercel/blob";
 import sharp from "sharp";
 
 export const dynamic = 'force-dynamic';
@@ -24,19 +23,8 @@ export async function POST(req: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Create public/uploads directory inside apps/web
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    await fs.mkdir(uploadDir, { recursive: true });
-
-    // Generate unique name
-    const timestamp = Date.now();
-    const ext = path.extname(file.name) || ".png";
-    const baseName = path.basename(file.name, ext).replace(/[^a-zA-Z0-9]/g, "_");
-    const fileName = `${baseName}_${timestamp}.webp`;
-    const filePath = path.join(uploadDir, fileName);
-
     // Optimize and compress image with sharp
-    await sharp(buffer)
+    const optimizedBuffer = await sharp(buffer)
       .resize({
         width: 1200, // Resize to max width of 1200px
         height: 1200,
@@ -44,10 +32,21 @@ export async function POST(req: Request) {
         withoutEnlargement: true
       })
       .webp({ quality: 80 }) // Convert to webp with 80% quality
-      .toFile(filePath);
+      .toBuffer();
 
-    // Return relative URL
-    return NextResponse.json({ url: `/uploads/${fileName}` });
+    // Generate unique filename
+    const timestamp = Date.now();
+    const ext = ".webp";
+    const baseName = file.name.replace(/[^a-zA-Z0-9]/g, "_").replace(/\.[^/.]+$/, "");
+    const fileName = `${baseName}_${timestamp}${ext}`;
+
+    // Upload to Vercel Blob
+    const blob = await put(`uploads/${fileName}`, optimizedBuffer, {
+      access: 'public',
+    });
+
+    // Return the blob URL
+    return NextResponse.json({ url: blob.url });
   } catch (error) {
     console.error("Error uploading file:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
