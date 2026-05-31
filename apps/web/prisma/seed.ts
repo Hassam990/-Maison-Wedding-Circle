@@ -12,8 +12,8 @@ const prisma = new PrismaClient({ adapter })
 
 async function main() {
   // 1. Hash passwords
-  const adminHash = await bcryptjs.hash('Admin@1234', 10)
-  const staffHash = await bcryptjs.hash('Staff@1234', 10)
+  const adminHash = await bcryptjs.hash('MaisonAdmin2026!', 10)
+  const staffHash = await bcryptjs.hash('MaisonStaff2026!', 10)
   const vendorHash = await bcryptjs.hash('Vendor@1234', 10)
   const coupleHash = await bcryptjs.hash('Couple@1234', 10)
 
@@ -21,20 +21,20 @@ async function main() {
   // 2. Create Super Admin
   const adminUser = await prisma.user.upsert({ 
     where: { email: 'admin@maisoncircle.com' }, 
-    update: { passwordHash: adminHash, role: 'SUPER_ADMIN', name: 'Lister' }, 
-    create: { name: 'Lister', email: 'admin@maisoncircle.com', passwordHash: adminHash, role: 'SUPER_ADMIN' }
+    update: { passwordHash: adminHash, role: 'SUPER_ADMIN', name: 'Super Admin' }, 
+    create: { name: 'Super Admin', email: 'admin@maisoncircle.com', passwordHash: adminHash, role: 'SUPER_ADMIN' }
   })
 
   // 3. Create Staff Admins
   const staff1 = await prisma.user.upsert({
     where: { email: 'staff1@maisoncircle.com' },
-    update: { passwordHash: staffHash, role: 'STAFF_ADMIN', name: 'Aisha Mirza' },
-    create: { name: 'Aisha Mirza', email: 'staff1@maisoncircle.com', passwordHash: staffHash, role: 'STAFF_ADMIN' }
+    update: { passwordHash: staffHash, role: 'STAFF_ADMIN', name: 'Dawood Staff 2' },
+    create: { name: 'Dawood Staff 2', email: 'staff1@maisoncircle.com', passwordHash: staffHash, role: 'STAFF_ADMIN' }
   })
   const staff2 = await prisma.user.upsert({
     where: { email: 'staff2@maisoncircle.com' },
-    update: { passwordHash: staffHash, role: 'STAFF_ADMIN', name: 'Bilal Siddiqui' },
-    create: { name: 'Bilal Siddiqui', email: 'staff2@maisoncircle.com', passwordHash: staffHash, role: 'STAFF_ADMIN' }
+    update: { passwordHash: staffHash, role: 'STAFF_ADMIN', name: 'Huma Mea Staff 2' },
+    create: { name: 'Huma Mea Staff 2', email: 'staff2@maisoncircle.com', passwordHash: staffHash, role: 'STAFF_ADMIN' }
   })
 
   console.log('Seeding Vendor Categories...')
