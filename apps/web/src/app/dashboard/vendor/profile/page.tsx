@@ -18,10 +18,13 @@ type VendorProfileResponse = {
   plan?: string | null;
   rating?: number | string | null;
   logoUrl?: string | null;
+  coverUrl?: string | null;
+  bannerUrl?: string | null;
   instagramUrl?: string | null;
   websiteUrl?: string | null;
   priceRange?: string | null;
   servicesOffered?: string[];
+  portfolioImages?: string[];
   galleryPhotos?: string[];
   galleryVideos?: string[];
   weddingHighlights?: string[];
@@ -34,10 +37,13 @@ type FormState = {
   city: string;
   bio: string;
   logoUrl: string;
+  coverUrl: string;
+  bannerUrl: string;
   instagramUrl: string;
   websiteUrl: string;
   priceRange: string;
   servicesOffered: string;
+  portfolioImages: string;
   galleryPhotos: string;
   galleryVideos: string;
   weddingHighlights: string;
@@ -49,10 +55,13 @@ const initialForm: FormState = {
   city: "",
   bio: "",
   logoUrl: "",
+  coverUrl: "",
+  bannerUrl: "",
   instagramUrl: "",
   websiteUrl: "",
   priceRange: "",
   servicesOffered: "",
+  portfolioImages: "",
   galleryPhotos: "",
   galleryVideos: "",
   weddingHighlights: "",
@@ -103,10 +112,13 @@ export default function VendorProfilePage() {
           city: profile.city || "",
           bio: profile.bio || "",
           logoUrl: profile.logoUrl || "",
+          coverUrl: profile.coverUrl || "",
+          bannerUrl: profile.bannerUrl || "",
           instagramUrl: profile.instagramUrl || "",
           websiteUrl: profile.websiteUrl || "",
           priceRange: profile.priceRange || "",
           servicesOffered: profile.servicesOffered ? profile.servicesOffered.join(", ") : "",
+          portfolioImages: profile.portfolioImages ? profile.portfolioImages.join(", ") : "",
           galleryPhotos: profile.galleryPhotos ? profile.galleryPhotos.join(", ") : "",
           galleryVideos: profile.galleryVideos ? profile.galleryVideos.join(", ") : "",
           weddingHighlights: profile.weddingHighlights ? profile.weddingHighlights.join(", ") : "",
@@ -155,10 +167,13 @@ export default function VendorProfilePage() {
           city: form.city.trim(),
           bio: form.bio.trim(),
           logoUrl: form.logoUrl.trim() || null,
+          coverUrl: form.coverUrl.trim() || null,
+          bannerUrl: form.bannerUrl.trim() || null,
           instagramUrl: form.instagramUrl.trim() || null,
           websiteUrl: form.websiteUrl.trim() || null,
           priceRange: form.priceRange.trim() || null,
           servicesOffered: form.servicesOffered.split(",").map(s => s.trim()).filter(Boolean),
+          portfolioImages: form.portfolioImages.split(",").map(s => s.trim()).filter(Boolean),
           galleryPhotos: form.galleryPhotos.split(",").map(s => s.trim()).filter(Boolean),
           galleryVideos: form.galleryVideos.split(",").map(s => s.trim()).filter(Boolean),
           weddingHighlights: form.weddingHighlights.split(",").map(s => s.trim()).filter(Boolean),
@@ -179,10 +194,13 @@ export default function VendorProfilePage() {
         city: profile.city || "",
         bio: profile.bio || "",
         logoUrl: profile.logoUrl || "",
+        coverUrl: profile.coverUrl || "",
+        bannerUrl: profile.bannerUrl || "",
         instagramUrl: profile.instagramUrl || "",
         websiteUrl: profile.websiteUrl || "",
         priceRange: profile.priceRange || "",
         servicesOffered: profile.servicesOffered ? profile.servicesOffered.join(", ") : "",
+        portfolioImages: profile.portfolioImages ? profile.portfolioImages.join(", ") : "",
         galleryPhotos: profile.galleryPhotos ? profile.galleryPhotos.join(", ") : "",
         galleryVideos: profile.galleryVideos ? profile.galleryVideos.join(", ") : "",
         weddingHighlights: profile.weddingHighlights ? profile.weddingHighlights.join(", ") : "",
@@ -357,6 +375,34 @@ export default function VendorProfilePage() {
                   </div>
 
                   <div className="space-y-2">
+                    <label className="text-sm font-medium text-stone-700" htmlFor="coverUrl">
+                      Cover Image URL
+                    </label>
+                    <Input
+                      id="coverUrl"
+                      value={form.coverUrl}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, coverUrl: event.target.value }))
+                      }
+                      placeholder="https://..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-stone-700" htmlFor="bannerUrl">
+                      Banner Image URL
+                    </label>
+                    <Input
+                      id="bannerUrl"
+                      value={form.bannerUrl}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, bannerUrl: event.target.value }))
+                      }
+                      placeholder="https://..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
                     <label className="text-sm font-medium text-stone-700" htmlFor="websiteUrl">
                       Website URL
                     </label>
@@ -411,6 +457,28 @@ export default function VendorProfilePage() {
                 </div>
 
                 <div className="space-y-2">
+                  <label className="text-sm font-medium text-stone-700" htmlFor="coverUrl">
+                    Cover Image Preview
+                  </label>
+                  {form.coverUrl && (
+                    <div className="h-48 w-full rounded-xl border border-stone-200 overflow-hidden">
+                      <img src={form.coverUrl} alt="Cover Preview" className="h-full w-full object-cover" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-stone-700" htmlFor="bannerUrl">
+                    Banner Image Preview
+                  </label>
+                  {form.bannerUrl && (
+                    <div className="h-32 w-full rounded-xl border border-stone-200 overflow-hidden">
+                      <img src={form.bannerUrl} alt="Banner Preview" className="h-full w-full object-cover" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
                   <label className="text-sm font-medium text-stone-700" htmlFor="bio">
                     Bio
                   </label>
@@ -445,6 +513,31 @@ export default function VendorProfilePage() {
                       {form.galleryPhotos.split(",").map((url, i) => (
                         <div key={i} className="aspect-square rounded-xl overflow-hidden border border-stone-200">
                           <img src={url.trim()} alt={`Gallery ${i+1}`} className="h-full w-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-stone-700" htmlFor="portfolioImages">
+                    Portfolio Images (comma separated URLs)
+                  </label>
+                  <textarea
+                    id="portfolioImages"
+                    value={form.portfolioImages}
+                    onChange={(event) =>
+                      setForm((current) => ({ ...current, portfolioImages: event.target.value }))
+                    }
+                    placeholder="https://..., https://..."
+                    rows={3}
+                    className="flex w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
+                  />
+                  {form.portfolioImages && (
+                    <div className="grid grid-cols-3 gap-2 mt-2">
+                      {form.portfolioImages.split(",").map((url, i) => (
+                        <div key={i} className="aspect-square rounded-xl overflow-hidden border border-stone-200">
+                          <img src={url.trim()} alt={`Portfolio ${i+1}`} className="h-full w-full object-cover" />
                         </div>
                       ))}
                     </div>
@@ -511,10 +604,13 @@ export default function VendorProfilePage() {
                           city: profile.city || "",
                           bio: profile.bio || "",
                           logoUrl: profile.logoUrl || "",
+                          coverUrl: profile.coverUrl || "",
+                          bannerUrl: profile.bannerUrl || "",
                           instagramUrl: profile.instagramUrl || "",
                           websiteUrl: profile.websiteUrl || "",
                           priceRange: profile.priceRange || "",
                           servicesOffered: profile.servicesOffered ? profile.servicesOffered.join(", ") : "",
+                          portfolioImages: profile.portfolioImages ? profile.portfolioImages.join(", ") : "",
                           galleryPhotos: profile.galleryPhotos ? profile.galleryPhotos.join(", ") : "",
                           galleryVideos: profile.galleryVideos ? profile.galleryVideos.join(", ") : "",
                           weddingHighlights: profile.weddingHighlights ? profile.weddingHighlights.join(", ") : "",
