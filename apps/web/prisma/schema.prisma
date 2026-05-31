@@ -83,11 +83,11 @@ model VendorProfile {
   instagramUrl     String?
   websiteUrl       String?
   priceRange       String? // £, ££, £££, Luxury, or "Starting from £1500"
-  servicesOffered  String[] // e.g., ["Mehndi", "Nikkah", "Walima"]
+  servicesOffered  String[]  @default([]) // e.g., ["Mehndi", "Nikkah", "Walima"]
   // Gallery fields
-  galleryPhotos    String[] // URLs of photos
-  galleryVideos    String[] // URLs of videos/reels
-  weddingHighlights String[] // URLs of wedding highlight photos/videos
+  galleryPhotos    String[]  @default([]) // URLs of photos
+  galleryVideos    String[]  @default([]) // URLs of videos/reels
+  weddingHighlights String[] @default([]) // URLs of wedding highlight photos/videos
   // Featured and visibility
   isFeatured       Boolean  @default(false)
   createdAt        DateTime @default(now())

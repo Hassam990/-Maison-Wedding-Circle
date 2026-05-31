@@ -11,7 +11,15 @@ export async function POST(
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id || session.user.role !== "COUPLE") {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    // Check if vendor exists
+    const vendor = await db.vendorProfile.findUnique({
+      where: { id: params.id },
+    });
+    if (!vendor) {
+      return NextResponse.json({ message: "Vendor not found" }, { status: 404 });
     }
 
     const data = await req.json();
@@ -49,6 +57,9 @@ export async function POST(
     return NextResponse.json(inquiry);
   } catch (error) {
     console.error("Inquiry error:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return NextResponse.json(
+      { message: "Unable to send inquiry. " + (error as Error).message },
+      { status: 500 }
+    );
   }
 }
