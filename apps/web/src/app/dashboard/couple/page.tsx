@@ -211,6 +211,9 @@ export default async function CoupleDashboardPage() {
         </div>
 
         <div className="flex flex-wrap gap-3">
+          <Link href="/dashboard/messages">
+            <Button variant="outline">Messages</Button>
+          </Link>
           <form action="/dashboard/couple/plan">
             <Button type="submit">Update plan</Button>
           </form>
@@ -385,7 +388,8 @@ export default async function CoupleDashboardPage() {
                 recentInquiries.map((inquiry) => (
                   <div
                     key={inquiry.id}
-                    className="rounded-2xl border border-neutral-200 p-4"
+                    className="rounded-2xl border border-neutral-200 p-4 hover:border-primary transition-colors cursor-pointer"
+                    onClick={() => window.location.href = `/dashboard/messages/${inquiry.id}`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>

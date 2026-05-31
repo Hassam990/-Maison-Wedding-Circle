@@ -118,18 +118,6 @@ export default async function VendorDetailPage({ params }: { params: { id: strin
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            {vendor.websiteUrl && (
-              <a href={vendor.websiteUrl} target="_blank" rel="noopener noreferrer" className="px-4 py-2 border border-stone-200 rounded-lg text-sm hover:bg-stone-50 transition-colors">
-                Website
-              </a>
-            )}
-            {vendor.instagramUrl && (
-              <a href={vendor.instagramUrl} target="_blank" rel="noopener noreferrer" className="px-4 py-2 border border-stone-200 rounded-lg text-sm hover:bg-stone-50 transition-colors">
-                Instagram
-              </a>
-            )}
-          </div>
         </div>
 
         {/* Gallery Section */}

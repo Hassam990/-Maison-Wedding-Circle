@@ -1,5 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 export async function POST(
@@ -7,17 +9,43 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id || session.user.role !== "COUPLE") {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
     const data = await req.json();
-    
-    // Schema uses vendorInquiry, not inquiry
+
+    let coupleProfile = await db.coupleProfile.findUnique({
+      where: { userId: session.user.id },
+    });
+
+    if (!coupleProfile) {
+      coupleProfile = await db.coupleProfile.create({
+        data: {
+          userId: session.user.id,
+        },
+      });
+    }
+
     const inquiry = await db.vendorInquiry.create({
       data: {
         vendorId: params.id,
-        coupleId: data.coupleId || "", // This needs a valid coupleId in your schema
+        coupleId: coupleProfile.id,
         message: data.message,
         eventDate: data.eventDate ? new Date(data.eventDate) : null,
       },
     });
+
+    await db.message.create({
+      data: {
+        inquiryId: inquiry.id,
+        senderId: session.user.id,
+        senderType: "COUPLE",
+        content: data.message,
+      },
+    });
+
     return NextResponse.json(inquiry);
   } catch (error) {
     console.error("Inquiry error:", error);

@@ -144,6 +144,19 @@ model VendorInquiry {
   eventDate DateTime?
   status    String        @default("New")
   createdAt DateTime      @default(now())
+  
+  messages Message[]
+}
+
+model Message {
+  id              String          @id @default(cuid())
+  inquiryId       String
+  inquiry         VendorInquiry   @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+  senderId        String
+  senderType      String          // "COUPLE" or "VENDOR"
+  content         String
+  isRead          Boolean         @default(false)
+  createdAt       DateTime        @default(now())
 }
 
 model Review {

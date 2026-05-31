@@ -158,6 +158,9 @@ export default async function VendorDashboardPage() {
         </div>
 
         <div className="flex gap-3">
+          <Link href="/dashboard/messages">
+            <Button variant="outline">Messages</Button>
+          </Link>
           <form action="/vendors">
             <Button type="submit" variant="outline">
               View marketplace
@@ -204,7 +207,8 @@ export default async function VendorDashboardPage() {
               {recentInquiries.map((inquiry) => (
                 <div
                   key={inquiry.id}
-                  className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm"
+                  className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm hover:border-primary transition-colors cursor-pointer"
+                  onClick={() => window.location.href = `/dashboard/messages/${inquiry.id}`}
                 >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="space-y-2">
