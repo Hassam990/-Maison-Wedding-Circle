@@ -647,7 +647,7 @@ export default function CouplePlanPage() {
                             >
                               <span>{task.title}</span>
                               <span className="text-neutral-500">
-                                {task.category || "General"} Ã¢â‚¬Â¢{" "}
+                                {task.category || "General"} •{" "}
                                 {task.completed ? "Complete" : "Pending"}
                               </span>
                             </div>

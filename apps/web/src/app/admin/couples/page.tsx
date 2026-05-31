@@ -120,7 +120,7 @@ export default function AdminCouplesPage() {
 
                   <div className="pt-4 border-t border-stone-50 flex items-center justify-between">
                      <span className="text-xs text-stone-400">{couple.consultations.length} Consultations</span>
-                     <button className="text-primary text-sm font-bold hover:underline">Details Ã¢â€ â€™</button>
+                     <button className="text-primary text-sm font-bold hover:underline">Details &rarr;</button>
                   </div>
                 </div>
               </CardContent>

@@ -241,7 +241,7 @@ export default function TestimonialsManager() {
                         </div>
                         <div>
                           <p className="text-sm font-bold text-[#3D0C1A]">{item.name}</p>
-                          <p className="text-[11px] text-[#8a6200]">{item.eventType} Ã‚Â· {item.location}</p>
+                          <p className="text-[11px] text-[#8a6200]">{item.eventType} • {item.location}</p>
                         </div>
                       </div>
                     </div>

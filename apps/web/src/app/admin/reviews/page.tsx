@@ -76,7 +76,7 @@ export default function ReviewsManagerPage() {
                  filterRating === r ? "bg-[#3D0C1A] text-white" : "bg-burgundy/5 text-burgundy/60 hover:bg-burgundy/10"
                }`}
              >
-               {r} Ã¢Ëœâ€¦
+               {r} ★
              </button>
            ))}
         </div>
