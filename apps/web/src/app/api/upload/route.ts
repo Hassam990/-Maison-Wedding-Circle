@@ -1,8 +1,15 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { put } from "@vercel/blob";
+import { v2 as cloudinary } from "cloudinary";
 import sharp from "sharp";
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export const dynamic = 'force-dynamic';
 
@@ -34,19 +41,20 @@ export async function POST(req: Request) {
       .webp({ quality: 80 }) // Convert to webp with 80% quality
       .toBuffer();
 
-    // Generate unique filename
-    const timestamp = Date.now();
-    const ext = ".webp";
-    const baseName = file.name.replace(/[^a-zA-Z0-9]/g, "_").replace(/\.[^/.]+$/, "");
-    const fileName = `${baseName}_${timestamp}${ext}`;
-
-    // Upload to Vercel Blob
-    const blob = await put(`uploads/${fileName}`, optimizedBuffer, {
-      access: 'public',
+    // Upload to Cloudinary
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "maison-wedding" },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(optimizedBuffer);
     });
 
-    // Return the blob URL
-    return NextResponse.json({ url: blob.url });
+    // Return the Cloudinary URL
+    return NextResponse.json({ url: (uploadResult as any).secure_url });
   } catch (error) {
     console.error("Error uploading file:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
