@@ -623,7 +623,7 @@ export default function AdminVendorsPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div>
                       <label className="block text-sm font-bold text-[#8a6200] mb-2">Logo URL</label>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 mb-2">
                         <Input 
                           value={formData.logoUrl}
                           onChange={(e) => setFormData({...formData, logoUrl: e.target.value})}
@@ -641,10 +641,13 @@ export default function AdminVendorsPage() {
                           />
                         </label>
                       </div>
+                      {formData.logoUrl && (
+                        <img src={formData.logoUrl} alt="Logo preview" className="w-20 h-20 object-cover rounded-lg border border-[#dbb84a]" />
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-[#8a6200] mb-2">Cover Image URL</label>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 mb-2">
                         <Input 
                           value={formData.coverUrl}
                           onChange={(e) => setFormData({...formData, coverUrl: e.target.value})}
@@ -662,10 +665,13 @@ export default function AdminVendorsPage() {
                           />
                         </label>
                       </div>
+                      {formData.coverUrl && (
+                        <img src={formData.coverUrl} alt="Cover preview" className="w-full h-24 object-cover rounded-lg border border-[#dbb84a]" />
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-[#8a6200] mb-2">Banner Image URL</label>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 mb-2">
                         <Input 
                           value={formData.bannerUrl}
                           onChange={(e) => setFormData({...formData, bannerUrl: e.target.value})}
@@ -683,6 +689,9 @@ export default function AdminVendorsPage() {
                           />
                         </label>
                       </div>
+                      {formData.bannerUrl && (
+                        <img src={formData.bannerUrl} alt="Banner preview" className="w-full h-24 object-cover rounded-lg border border-[#dbb84a]" />
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-[#8a6200] mb-2">Website URL</label>
@@ -742,6 +751,13 @@ export default function AdminVendorsPage() {
                           onChange={(e) => handleMultipleFilesUpload(e, 'portfolioImages')} 
                         />
                       </label>
+                      {formData.portfolioImages && (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {formData.portfolioImages.split(",").map(s => s.trim()).filter(Boolean).map((url, i) => (
+                            <img key={i} src={url} alt={`Portfolio ${i+1}`} className="w-20 h-20 object-cover rounded-lg border border-[#dbb84a]" />
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="mt-4">
