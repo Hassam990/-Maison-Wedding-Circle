@@ -2,6 +2,7 @@
 export const dynamic = 'force-dynamic';
 
 import { FormEvent, useEffect, useState } from "react";
+import { Toaster, toast } from "sonner";
 
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -100,9 +101,14 @@ export default function VendorProfilePage() {
       if (response.ok) {
         const data = await response.json();
         setForm((current) => ({ ...current, [field]: data.url }));
+        toast.success("File uploaded successfully!");
+      } else {
+        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+        toast.error(errorData.error || "Failed to upload file");
       }
     } catch (error) {
       console.error("Upload error", error);
+      toast.error("An unexpected error occurred during upload");
     } finally {
       setUploading(false);
     }
@@ -139,9 +145,11 @@ export default function VendorProfilePage() {
           const newList = [...currentList, ...uploadedUrls];
           return { ...current, [field]: newList.join(", ") };
         });
+        toast.success(`Uploaded ${uploadedUrls.length} file(s) successfully!`);
       }
     } catch (error) {
       console.error("Upload error", error);
+      toast.error("An unexpected error occurred during upload");
     } finally {
       setUploading(false);
     }
@@ -797,6 +805,7 @@ export default function VendorProfilePage() {
           )}
         </CardContent>
       </Card>
+      <Toaster />
     </div>
   );
 }
