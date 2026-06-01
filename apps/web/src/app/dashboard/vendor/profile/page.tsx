@@ -90,21 +90,23 @@ export default function VendorProfilePage() {
     setUploading(true);
     
     try {
-      const formDataUpload = new FormData();
-      formDataUpload.append("file", file);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "maison-wedding-unsigned"); // Replace with your preset name!
+      formData.append("cloud_name", "dgatsavij"); // Your cloud name!
 
-      const response = await fetch("/api/upload", {
+      const response = await fetch(`https://api.cloudinary.com/v1_1/dgatsavij/image/upload`, {
         method: "POST",
-        body: formDataUpload,
+        body: formData,
       });
 
       if (response.ok) {
         const data = await response.json();
-        setForm((current) => ({ ...current, [field]: data.url }));
+        setForm((current) => ({ ...current, [field]: data.secure_url }));
         toast.success("File uploaded successfully!");
       } else {
-        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
-        toast.error(errorData.error || "Failed to upload file");
+        const errorData = await response.json().catch(() => ({ error: { message: "Unknown error" } }));
+        toast.error(errorData.error?.message || "Failed to upload file");
       }
     } catch (error) {
       console.error("Upload error", error);
@@ -124,17 +126,19 @@ export default function VendorProfilePage() {
       const uploadedUrls: string[] = [];
 
       for (let i = 0; i < files.length; i++) {
-        const formDataUpload = new FormData();
-        formDataUpload.append("file", files[i]);
+        const formData = new FormData();
+        formData.append("file", files[i]);
+        formData.append("upload_preset", "maison-wedding-unsigned"); // Replace with your preset name!
+        formData.append("cloud_name", "dgatsavij"); // Your cloud name!
 
-        const response = await fetch("/api/upload", {
+        const response = await fetch(`https://api.cloudinary.com/v1_1/dgatsavij/image/upload`, {
           method: "POST",
-          body: formDataUpload,
+          body: formData,
         });
 
         if (response.ok) {
           const data = await response.json();
-          uploadedUrls.push(data.url);
+          uploadedUrls.push(data.secure_url);
         }
       }
 

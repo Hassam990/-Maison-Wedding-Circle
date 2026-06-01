@@ -129,23 +129,26 @@ export default function AdminVendorsPage() {
     const toastId = toast.loading("Uploading file...");
     
     try {
-      const formDataUpload = new FormData();
-      formDataUpload.append("file", file);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "maison-wedding-unsigned"); // Replace with your preset!
+      formData.append("cloud_name", "dgatsavij");
 
-      const res = await fetch("/api/upload", {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/dgatsavij/image/upload`, {
         method: "POST",
-        body: formDataUpload,
+        body: formData,
       });
 
       if (res.ok) {
         const data = await res.json();
         setFormData(prev => ({
           ...prev,
-          [field]: data.url
+          [field]: data.secure_url
         }));
         toast.success("File uploaded successfully", { id: toastId });
       } else {
-        toast.error("Upload failed", { id: toastId });
+        const errorData = await res.json().catch(() => ({ error: { message: "Unknown error" } }));
+        toast.error(errorData.error?.message || "Upload failed", { id: toastId });
       }
     } catch (error) {
       toast.error("Upload error", { id: toastId });
@@ -165,17 +168,19 @@ export default function AdminVendorsPage() {
       const uploadedUrls: string[] = [];
       
       for (let i = 0; i < files.length; i++) {
-        const formDataUpload = new FormData();
-        formDataUpload.append("file", files[i]);
+        const formData = new FormData();
+        formData.append("file", files[i]);
+        formData.append("upload_preset", "maison-wedding-unsigned"); // Replace with your preset!
+        formData.append("cloud_name", "dgatsavij");
 
-        const res = await fetch("/api/upload", {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/dgatsavij/image/upload`, {
           method: "POST",
-          body: formDataUpload,
+          body: formData,
         });
 
         if (res.ok) {
           const data = await res.json();
-          uploadedUrls.push(data.url);
+          uploadedUrls.push(data.secure_url);
         }
       }
 
