@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/lib/supabase";
 
 type VendorProfileResponse = {
   id: string;
@@ -90,23 +91,21 @@ export default function VendorProfilePage() {
     setUploading(true);
     
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", "maison-wedding-unsigned"); // Replace with your preset name!
-      formData.append("cloud_name", "dgatsavij"); // Your cloud name!
+      // Create a unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `vendor-uploads/${fileName}`;
+      
+      const { error: uploadError, data } = await supabase.storage
+        .from('maison-wedding')
+        .upload(filePath, file);
 
-      const response = await fetch(`https://api.cloudinary.com/v1_1/dgatsavij/image/upload`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setForm((current) => ({ ...current, [field]: data.secure_url }));
-        toast.success("File uploaded successfully!");
+      if (uploadError) {
+        toast.error("Upload failed: " + uploadError.message);
       } else {
-        const errorData = await response.json().catch(() => ({ error: { message: "Unknown error" } }));
-        toast.error(errorData.error?.message || "Failed to upload file");
+        const { data: { publicUrl } } = supabase.storage.from('maison-wedding').getPublicUrl(filePath);
+        setForm((current) => ({ ...current, [field]: publicUrl }));
+        toast.success("File uploaded successfully!");
       }
     } catch (error) {
       console.error("Upload error", error);
@@ -126,19 +125,20 @@ export default function VendorProfilePage() {
       const uploadedUrls: string[] = [];
 
       for (let i = 0; i < files.length; i++) {
-        const formData = new FormData();
-        formData.append("file", files[i]);
-        formData.append("upload_preset", "maison-wedding-unsigned"); // Replace with your preset name!
-        formData.append("cloud_name", "dgatsavij"); // Your cloud name!
+        const file = files[i];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = `vendor-uploads/${fileName}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('maison-wedding')
+          .upload(filePath, file);
 
-        const response = await fetch(`https://api.cloudinary.com/v1_1/dgatsavij/image/upload`, {
-          method: "POST",
-          body: formData,
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          uploadedUrls.push(data.secure_url);
+        if (uploadError) {
+          console.error("Upload error for file", file.name, uploadError);
+        } else {
+          const { data: { publicUrl } } = supabase.storage.from('maison-wedding').getPublicUrl(filePath);
+          uploadedUrls.push(publicUrl);
         }
       }
 
@@ -150,6 +150,8 @@ export default function VendorProfilePage() {
           return { ...current, [field]: newList.join(", ") };
         });
         toast.success(`Uploaded ${uploadedUrls.length} file(s) successfully!`);
+      } else {
+        toast.error("All uploads failed!");
       }
     } catch (error) {
       console.error("Upload error", error);

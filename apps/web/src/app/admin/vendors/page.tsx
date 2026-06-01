@@ -25,6 +25,7 @@ import {
   X
 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 interface Vendor {
   id: string;
@@ -129,26 +130,21 @@ export default function AdminVendorsPage() {
     const toastId = toast.loading("Uploading file...");
     
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", "maison-wedding-unsigned"); // Replace with your preset!
-      formData.append("cloud_name", "dgatsavij");
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `admin-uploads/${fileName}`;
 
-      const res = await fetch(`https://api.cloudinary.com/v1_1/dgatsavij/image/upload`, {
-        method: "POST",
-        body: formData,
-      });
+      const { error: uploadError } = await supabase.storage.from('maison-wedding').upload(filePath, file);
 
-      if (res.ok) {
-        const data = await res.json();
+      if (uploadError) {
+        toast.error("Upload failed: " + uploadError.message, { id: toastId });
+      } else {
+        const { data: { publicUrl } } = supabase.storage.from('maison-wedding').getPublicUrl(filePath);
         setFormData(prev => ({
           ...prev,
-          [field]: data.secure_url
+          [field]: publicUrl
         }));
         toast.success("File uploaded successfully", { id: toastId });
-      } else {
-        const errorData = await res.json().catch(() => ({ error: { message: "Unknown error" } }));
-        toast.error(errorData.error?.message || "Upload failed", { id: toastId });
       }
     } catch (error) {
       toast.error("Upload error", { id: toastId });
@@ -166,21 +162,20 @@ export default function AdminVendorsPage() {
     
     try {
       const uploadedUrls: string[] = [];
-      
+
       for (let i = 0; i < files.length; i++) {
-        const formData = new FormData();
-        formData.append("file", files[i]);
-        formData.append("upload_preset", "maison-wedding-unsigned"); // Replace with your preset!
-        formData.append("cloud_name", "dgatsavij");
+        const file = files[i];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = `admin-uploads/${fileName}`;
+        
+        const { error: uploadError } = await supabase.storage.from('maison-wedding').upload(filePath, file);
 
-        const res = await fetch(`https://api.cloudinary.com/v1_1/dgatsavij/image/upload`, {
-          method: "POST",
-          body: formData,
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          uploadedUrls.push(data.secure_url);
+        if (uploadError) {
+          console.error("Upload error for file", file.name, uploadError);
+        } else {
+          const { data: { publicUrl } } = supabase.storage.from('maison-wedding').getPublicUrl(filePath);
+          uploadedUrls.push(publicUrl);
         }
       }
 
