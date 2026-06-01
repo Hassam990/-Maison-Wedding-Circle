@@ -76,10 +76,76 @@ export default function VendorProfilePage() {
   }>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [feedback, setFeedback] = useState<{
     type: "success" | "error";
     message: string;
   } | null>(null);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: keyof FormState) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataUpload,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setForm((current) => ({ ...current, [field]: data.url }));
+      }
+    } catch (error) {
+      console.error("Upload error", error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleMultipleFilesUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: keyof FormState) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    
+    try {
+      const uploadedUrls: string[] = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const formDataUpload = new FormData();
+        formDataUpload.append("file", files[i]);
+
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formDataUpload,
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          uploadedUrls.push(data.url);
+        }
+      }
+
+      if (uploadedUrls.length > 0) {
+        setForm((current) => {
+          const currentVal = current[field] as string;
+          const currentList = currentVal ? currentVal.split(",").map(s => s.trim()).filter(Boolean) : [];
+          const newList = [...currentList, ...uploadedUrls];
+          return { ...current, [field]: newList.join(", ") };
+        });
+      }
+    } catch (error) {
+      console.error("Upload error", error);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -364,42 +430,81 @@ export default function VendorProfilePage() {
                     <label className="text-sm font-medium text-stone-700" htmlFor="logoUrl">
                       Logo URL
                     </label>
-                    <Input
-                      id="logoUrl"
-                      value={form.logoUrl}
-                      onChange={(event) =>
-                        setForm((current) => ({ ...current, logoUrl: event.target.value }))
-                      }
-                      placeholder="https://..."
-                    />
+                    <div className="flex gap-2">
+                      <Input
+                        id="logoUrl"
+                        value={form.logoUrl}
+                        onChange={(event) =>
+                          setForm((current) => ({ ...current, logoUrl: event.target.value }))
+                        }
+                        placeholder="https://..."
+                        className="flex-1"
+                      />
+                      <label className="cursor-pointer bg-[#3D0C1A] text-white hover:bg-[#5a122a] text-xs font-bold px-4 py-3 rounded-xl flex items-center justify-center transition-all whitespace-nowrap">
+                        {uploading ? "Uploading..." : "Upload Logo"}
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          disabled={uploading}
+                          className="hidden" 
+                          onChange={(e) => handleFileUpload(e, "logoUrl")} 
+                        />
+                      </label>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-stone-700" htmlFor="coverUrl">
                       Cover Image URL
                     </label>
-                    <Input
-                      id="coverUrl"
-                      value={form.coverUrl}
-                      onChange={(event) =>
-                        setForm((current) => ({ ...current, coverUrl: event.target.value }))
-                      }
-                      placeholder="https://..."
-                    />
+                    <div className="flex gap-2">
+                      <Input
+                        id="coverUrl"
+                        value={form.coverUrl}
+                        onChange={(event) =>
+                          setForm((current) => ({ ...current, coverUrl: event.target.value }))
+                        }
+                        placeholder="https://..."
+                        className="flex-1"
+                      />
+                      <label className="cursor-pointer bg-[#3D0C1A] text-white hover:bg-[#5a122a] text-xs font-bold px-4 py-3 rounded-xl flex items-center justify-center transition-all whitespace-nowrap">
+                        {uploading ? "Uploading..." : "Upload Cover"}
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          disabled={uploading}
+                          className="hidden" 
+                          onChange={(e) => handleFileUpload(e, "coverUrl")} 
+                        />
+                      </label>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-stone-700" htmlFor="bannerUrl">
                       Banner Image URL
                     </label>
-                    <Input
-                      id="bannerUrl"
-                      value={form.bannerUrl}
-                      onChange={(event) =>
-                        setForm((current) => ({ ...current, bannerUrl: event.target.value }))
-                      }
-                      placeholder="https://..."
-                    />
+                    <div className="flex gap-2">
+                      <Input
+                        id="bannerUrl"
+                        value={form.bannerUrl}
+                        onChange={(event) =>
+                          setForm((current) => ({ ...current, bannerUrl: event.target.value }))
+                        }
+                        placeholder="https://..."
+                        className="flex-1"
+                      />
+                      <label className="cursor-pointer bg-[#3D0C1A] text-white hover:bg-[#5a122a] text-xs font-bold px-4 py-3 rounded-xl flex items-center justify-center transition-all whitespace-nowrap">
+                        {uploading ? "Uploading..." : "Upload Banner"}
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          disabled={uploading}
+                          className="hidden" 
+                          onChange={(e) => handleFileUpload(e, "bannerUrl")} 
+                        />
+                      </label>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -498,16 +603,29 @@ export default function VendorProfilePage() {
                   <label className="text-sm font-medium text-stone-700" htmlFor="galleryPhotos">
                     Gallery Photos (comma separated URLs)
                   </label>
-                  <textarea
-                    id="galleryPhotos"
-                    value={form.galleryPhotos}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, galleryPhotos: event.target.value }))
-                    }
-                    placeholder="https://..., https://..."
-                    rows={3}
-                    className="flex w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
-                  />
+                  <div className="flex flex-col gap-2">
+                    <textarea
+                      id="galleryPhotos"
+                      value={form.galleryPhotos}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, galleryPhotos: event.target.value }))
+                      }
+                      placeholder="https://..., https://..."
+                      rows={3}
+                      className="flex w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
+                    />
+                    <label className="cursor-pointer bg-[#3D0C1A] text-white hover:bg-[#5a122a] text-xs font-bold px-4 py-3 rounded-xl flex items-center justify-center transition-all whitespace-nowrap self-start">
+                      {uploading ? "Uploading..." : "Upload Gallery Photos"}
+                      <input 
+                        type="file" 
+                        multiple
+                        accept="image/*" 
+                        disabled={uploading}
+                        className="hidden" 
+                        onChange={(e) => handleMultipleFilesUpload(e, "galleryPhotos")} 
+                      />
+                    </label>
+                  </div>
                   {form.galleryPhotos && (
                     <div className="grid grid-cols-3 gap-2 mt-2">
                       {form.galleryPhotos.split(",").map((url, i) => (
@@ -523,16 +641,29 @@ export default function VendorProfilePage() {
                   <label className="text-sm font-medium text-stone-700" htmlFor="portfolioImages">
                     Portfolio Images (comma separated URLs)
                   </label>
-                  <textarea
-                    id="portfolioImages"
-                    value={form.portfolioImages}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, portfolioImages: event.target.value }))
-                    }
-                    placeholder="https://..., https://..."
-                    rows={3}
-                    className="flex w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
-                  />
+                  <div className="flex flex-col gap-2">
+                    <textarea
+                      id="portfolioImages"
+                      value={form.portfolioImages}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, portfolioImages: event.target.value }))
+                      }
+                      placeholder="https://..., https://..."
+                      rows={3}
+                      className="flex w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
+                    />
+                    <label className="cursor-pointer bg-[#3D0C1A] text-white hover:bg-[#5a122a] text-xs font-bold px-4 py-3 rounded-xl flex items-center justify-center transition-all whitespace-nowrap self-start">
+                      {uploading ? "Uploading..." : "Upload Portfolio Images"}
+                      <input 
+                        type="file" 
+                        multiple
+                        accept="image/*" 
+                        disabled={uploading}
+                        className="hidden" 
+                        onChange={(e) => handleMultipleFilesUpload(e, "portfolioImages")} 
+                      />
+                    </label>
+                  </div>
                   {form.portfolioImages && (
                     <div className="grid grid-cols-3 gap-2 mt-2">
                       {form.portfolioImages.split(",").map((url, i) => (
@@ -548,32 +679,58 @@ export default function VendorProfilePage() {
                   <label className="text-sm font-medium text-stone-700" htmlFor="weddingHighlights">
                     Wedding Highlights (comma separated URLs)
                   </label>
-                  <textarea
-                    id="weddingHighlights"
-                    value={form.weddingHighlights}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, weddingHighlights: event.target.value }))
-                    }
-                    placeholder="https://..., https://..."
-                    rows={3}
-                    className="flex w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
-                  />
+                  <div className="flex flex-col gap-2">
+                    <textarea
+                      id="weddingHighlights"
+                      value={form.weddingHighlights}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, weddingHighlights: event.target.value }))
+                      }
+                      placeholder="https://..., https://..."
+                      rows={3}
+                      className="flex w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
+                    />
+                    <label className="cursor-pointer bg-[#3D0C1A] text-white hover:bg-[#5a122a] text-xs font-bold px-4 py-3 rounded-xl flex items-center justify-center transition-all whitespace-nowrap self-start">
+                      {uploading ? "Uploading..." : "Upload Wedding Highlights"}
+                      <input 
+                        type="file" 
+                        multiple
+                        accept="image/*,video/*" 
+                        disabled={uploading}
+                        className="hidden" 
+                        onChange={(e) => handleMultipleFilesUpload(e, "weddingHighlights")} 
+                      />
+                    </label>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-stone-700" htmlFor="galleryVideos">
                     Gallery Videos (comma separated URLs)
                   </label>
-                  <textarea
-                    id="galleryVideos"
-                    value={form.galleryVideos}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, galleryVideos: event.target.value }))
-                    }
-                    placeholder="https://..., https://..."
-                    rows={3}
-                    className="flex w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
-                  />
+                  <div className="flex flex-col gap-2">
+                    <textarea
+                      id="galleryVideos"
+                      value={form.galleryVideos}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, galleryVideos: event.target.value }))
+                      }
+                      placeholder="https://..., https://..."
+                      rows={3}
+                      className="flex w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
+                    />
+                    <label className="cursor-pointer bg-[#3D0C1A] text-white hover:bg-[#5a122a] text-xs font-bold px-4 py-3 rounded-xl flex items-center justify-center transition-all whitespace-nowrap self-start">
+                      {uploading ? "Uploading..." : "Upload Gallery Videos"}
+                      <input 
+                        type="file" 
+                        multiple
+                        accept="video/*" 
+                        disabled={uploading}
+                        className="hidden" 
+                        onChange={(e) => handleMultipleFilesUpload(e, "galleryVideos")} 
+                      />
+                    </label>
+                  </div>
                 </div>
               </div>
 
